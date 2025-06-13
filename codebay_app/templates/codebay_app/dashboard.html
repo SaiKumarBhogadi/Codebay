@@ -1,0 +1,362 @@
+{% extends "codebay_app/base.html" %}
+{% block content %}
+  <style>
+    /* Dashboard Container */
+    .dashboard-container {
+      padding: 3rem 1.5rem;
+      background-color: #F5F7FA;
+      min-height: calc(100vh - 200px); /* Adjust for navbar and footer */
+    }
+
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      animation: fadeIn 1s ease-in;
+    }
+
+    .dashboard-title {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #2C3E50;
+      margin-bottom: 0.5rem;
+    }
+
+    .dashboard-welcome {
+      font-size: 1.1rem;
+      color: #95A5A6;
+    }
+
+    /* Dashboard Links */
+    .dashboard-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .dashboard-card {
+      background-color: #FFFFFF;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      animation: fadeIn 1s ease-in;
+      transition: transform 0.3s ease;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .dashboard-card h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #2C3E50;
+      margin-bottom: 0.5rem;
+    }
+
+    .dashboard-card p {
+      font-size: 0.95rem;
+      color: #95A5A6;
+      margin-bottom: 1rem;
+    }
+
+    .dashboard-card a {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.95rem;
+      background-color: #3498DB;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+      display: inline-block;
+    }
+
+    .dashboard-card a:hover {
+      background-color: #F39C12;
+    }
+
+    /* Stat Card */
+    .stat-card {
+      background-color: #FFFFFF;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      animation: fadeIn 1s ease-in;
+      margin: 2rem auto;
+      max-width: 400px;
+    }
+
+    .stat-card h4 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #2C3E50;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-card p {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #3498DB;
+      margin: 0;
+    }
+
+    /* Orders Section */
+    .orders-section {
+      max-width: 800px;
+      margin: 3rem auto;
+    }
+
+    .orders-section h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #2C3E50;
+      text-align: center;
+      margin-bottom: 2rem;
+      animation: fadeIn 1s ease-in;
+    }
+
+    .orders-table {
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      animation: fadeIn 1s ease-in;
+    }
+
+    .orders-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .orders-table th, .orders-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e0e4e8;
+    }
+
+    .orders-table th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #2C3E50;
+    }
+
+    .orders-table td {
+      color: #495057;
+      font-weight: 300;
+    }
+
+    .orders-table ul {
+      margin: 0;
+      padding-left: 1rem;
+      list-style-type: none;
+    }
+
+    .orders-table li {
+      margin-bottom: 0.5rem;
+    }
+
+    .no-orders {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #95A5A6;
+      padding: 2rem;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .dashboard-container {
+        padding: 2rem 1rem;
+      }
+
+      .dashboard-title {
+        font-size: 1.75rem;
+      }
+
+      .dashboard-welcome {
+        font-size: 1rem;
+      }
+
+      .dashboard-links {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .dashboard-card {
+        padding: 1.5rem;
+      }
+
+      .dashboard-card h3 {
+        font-size: 1.25rem;
+      }
+
+      .dashboard-card a {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+
+      .stat-card {
+        padding: 1rem;
+        margin: 1.5rem auto;
+      }
+
+      .stat-card h4 {
+        font-size: 1rem;
+      }
+
+      .stat-card p {
+        font-size: 1.25rem;
+      }
+
+      .orders-section h2 {
+        font-size: 1.75rem;
+      }
+
+      .orders-table th, .orders-table td {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .dashboard-container {
+        padding: 1.5rem 0.75rem;
+      }
+
+      .dashboard-title {
+        font-size: 1.5rem;
+      }
+
+      .dashboard-welcome {
+        font-size: 0.9rem;
+      }
+
+      .dashboard-card {
+        padding: 1rem;
+      }
+
+      .dashboard-card h3 {
+        font-size: 1.1rem;
+      }
+
+      .dashboard-card p {
+        font-size: 0.9rem;
+      }
+
+      .dashboard-card a {
+        font-size: 0.85rem;
+      }
+
+      .stat-card h4 {
+        font-size: 0.9rem;
+      }
+
+      .stat-card p {
+        font-size: 1.1rem;
+      }
+
+      .orders-section h2 {
+        font-size: 1.5rem;
+      }
+
+      .orders-table th, .orders-table td {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+      }
+
+      .orders-table thead {
+        display: none;
+      }
+
+      .orders-table tr {
+        display: block;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #e0e4e8;
+      }
+
+      .orders-table td {
+        display: flex;
+        justify-content: space-between;
+        border: none;
+        padding: 0.5rem 1rem;
+      }
+
+      .orders-table td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #2C3E50;
+      }
+    }
+  </style>
+
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <h2 class="dashboard-title">User Dashboard</h2>
+      <p class="dashboard-welcome">Welcome back, {{ request.user.full_name|default:request.user.email }}!</p>
+    </div>
+
+    <!-- Stat Card -->
+    <div class="stat-card">
+      <h4>Total Downloaded Templates</h4>
+      <p>{{ total_downloads }}</p>
+    </div>
+
+    <!-- Dashboard Links -->
+    <div class="dashboard-links">
+      <div class="dashboard-card">
+        <h3>Settings</h3>
+        <p>Update your profile and manage your password.</p>
+        <a href="{% url 'codebay_app:user_settings' %}">Go to Settings</a>
+      </div>
+      <div class="dashboard-card">
+        <h3>Downloaded Templates</h3>
+        <p>View and re-download your purchased templates.</p>
+        <a href="{% url 'codebay_app:downloaded_templates' %}">View Templates</a>
+      </div>
+    </div>
+
+    <!-- Orders Section -->
+    <div class="orders-section">
+      <h2>Recent Orders</h2>
+      {% if orders %}
+        <div class="orders-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Items</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in orders %}
+                <tr>
+                  <td data-label="Order ID">#{{ order.id }}</td>
+                  <td data-label="Date">{{ order.created_at|date:"F d, Y" }}</td>
+                  <td data-label="Total">Rs &nbsp;{{ order.total_amount }}</td>
+                  <td data-label="Status">{{ order.status|capfirst }}</td>
+                  <td data-label="Items">
+                    <ul>
+                      {% for item in order.items.all %}
+                        <li>{{ item.template.name }} (x{{ item.quantity }}) - Rs &nbsp;{{ item.subtotal }}</li>
+                      {% endfor %}
+                    </ul>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="no-orders">
+          <p>You have no orders yet. <a href="{% url 'codebay_app:templates_list' %}">Browse templates</a> to get started.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,444 @@
+{% extends 'admin_panel/base.html' %}
+{% block title %}Add Template{% endblock %}
+{% block header_title %}Add New Template{% endblock %}
+{% block content %}
+<style>
+  .form-section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #2C3E50;
+    margin-bottom: 0.5rem;
+  }
+  .form-control {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.95rem;
+    border: 1px solid #E0E4E8;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  .form-control:focus {
+    border-color: #3498DB;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  }
+  .form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+  }
+  .form-actions button {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .form-actions .save-btn {
+    background-color: #3498DB;
+    color: #FFFFFF;
+  }
+  .form-actions .cancel-btn {
+    background-color: #E0E4E8;
+    color: #2C3E50;
+  }
+  .form-actions .save-btn:hover {
+    background-color: #F39C12;
+  }
+  .form-actions .cancel-btn:hover {
+    background-color: #D0D4D8;
+  }
+  .error-message {
+    color: #E74C3C;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  .field-error {
+    color: #E74C3C;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+  }
+  .formset-section {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #F9F9F9;
+    border-radius: 6px;
+  }
+  .formset-section h4 {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #2C3E50;
+    margin-bottom: 1rem;
+  }
+  .formset-item {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #FFFFFF;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    position: relative;
+  }
+  .formset-item .form-group {
+    margin-bottom: 0.75rem;
+  }
+  .add-form-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    background-color: #3498DB;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 1rem;
+  }
+  .add-form-btn:hover {
+    background-color: #F39C12;
+  }
+  .delete-form-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    color: #E74C3C;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  @media (max-width: 768px) {
+    .form-section {
+      padding: 1rem;
+    }
+    .form-group label {
+      font-size: 0.9rem;
+    }
+    .form-control {
+      font-size: 0.9rem;
+      padding: 0.5rem;
+    }
+    .form-actions {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .form-actions button {
+      width: 100%;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+  }
+  @media (max-width: 576px) {
+    .form-group label {
+      font-size: 0.85rem;
+    }
+    .form-control {
+      font-size: 0.85rem;
+    }
+    .form-actions button {
+      font-size: 0.85rem;
+    }
+    .formset-section h4 {
+      font-size: 1rem;
+    }
+  }
+</style>
+
+<div class="section form-section">
+  <h3>Add New Template</h3>
+  {% if messages %}
+    {% for message in messages %}
+      <p class="error-message {{ message.tags }}">{{ message }}</p>
+    {% endfor %}
+  {% endif %}
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-group">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.errors %}
+          {% for error in field.errors %}
+            <div class="field-error">{{ error }}</div>
+          {% endfor %}
+        {% endif %}
+        {% if field.help_text %}
+          <small class="form-text text-muted">{{ field.help_text }}</small>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <!-- Template Images Formset -->
+    <div class="formset-section">
+      <h4>Template Images</h4>
+      {{ image_formset.management_form }}
+      <div id="image-formset-container">
+        {% for form in image_formset %}
+          <div class="formset-item image-formset-item">
+            {% for hidden in form.hidden_fields %}
+              {{ hidden }}
+            {% endfor %}
+            {% for field in form.visible_fields %}
+              <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                  {% for error in field.errors %}
+                    <div class="field-error">{{ error }}</div>
+                  {% endfor %}
+                {% endif %}
+              </div>
+            {% endfor %}
+            {% if not forloop.first %}
+              <button type="button" class="delete-form-btn"><i class="bi bi-trash"></i></button>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      <button type="button" class="add-form-btn" data-formset="image">Add Another Image <i class="bi bi-plus"></i></button>
+    </div>
+
+    <!-- Screenshots Formset -->
+    <div class="formset-section">
+      <h4>Screenshots</h4>
+      {{ screenshot_formset.management_form }}
+      <div id="screenshot-formset-container">
+        {% for form in screenshot_formset %}
+          <div class="formset-item screenshot-formset-item">
+            {% for hidden in form.hidden_fields %}
+              {{ hidden }}
+            {% endfor %}
+            {% for field in form.visible_fields %}
+              <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                  {% for error in field.errors %}
+                    <div class="field-error">{{ error }}</div>
+                  {% endfor %}
+                {% endif %}
+              </div>
+            {% endfor %}
+            {% if not forloop.first %}
+              <button type="button" class="delete-form-btn"><i class="bi bi-trash"></i></button>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      <button type="button" class="add-form-btn" data-formset="screenshot">Add Another Screenshot <i class="bi bi-plus"></i></button>
+    </div>
+
+    <!-- Features Formset -->
+    <div class="formset-section">
+      <h4>Features</h4>
+      {{ feature_formset.management_form }}
+      <div id="feature-formset-container">
+        {% for form in feature_formset %}
+          <div class="formset-item feature-formset-item">
+            {% for hidden in form.hidden_fields %}
+              {{ hidden }}
+            {% endfor %}
+            {% for field in form.visible_fields %}
+              <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                  {% for error in field.errors %}
+                    <div class="field-error">{{ error }}</div>
+                  {% endfor %}
+                {% endif %}
+              </div>
+            {% endfor %}
+            {% if not forloop.first %}
+              <button type="button" class="delete-form-btn"><i class="bi bi-trash"></i></button>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      <button type="button" class="add-form-btn" data-formset="feature">Add Another Feature <i class="bi bi-plus"></i></button>
+    </div>
+
+    <!-- Reviews Formset -->
+    <div class="formset-section">
+      <h4>Reviews</h4>
+      {{ review_formset.management_form }}
+      <div id="review-formset-container">
+        {% for form in review_formset %}
+          <div class="formset-item review-formset-item">
+            {% for hidden in form.hidden_fields %}
+              {{ hidden }}
+            {% endfor %}
+            {% for field in form.visible_fields %}
+              <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                  {% for error in field.errors %}
+                    <div class="field-error">{{ error }}</div>
+                  {% endfor %}
+                {% endif %}
+              </div>
+            {% endfor %}
+            {% if not forloop.first %}
+              <button type="button" class="delete-form-btn"><i class="bi bi-trash"></i></button>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      <button type="button" class="add-form-btn" data-formset="review">Add Another Review <i class="bi bi-plus"></i></button>
+    </div>
+
+    <!-- FAQs Formset -->
+    <div class="formset-section">
+      <h4>FAQs</h4>
+      {{ faq_formset.management_form }}
+      <div id="faq-formset-container">
+        {% for form in faq_formset %}
+          <div class="formset-item faq-formset-item">
+            {% for hidden in form.hidden_fields %}
+              {{ hidden }}
+            {% endfor %}
+            {% for field in form.visible_fields %}
+              <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                  {% for error in field.errors %}
+                    <div class="field-error">{{ error }}</div>
+                  {% endfor %}
+                {% endif %}
+              </div>
+            {% endfor %}
+            {% if not forloop.first %}
+              <button type="button" class="delete-form-btn"><i class="bi bi-trash"></i></button>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      <button type="button" class="add-form-btn" data-formset="faq">Add Another FAQ <i class="bi bi-plus"></i></button>
+    </div>
+
+    <div class="form-actions">
+      <a href="{% url 'admin_panel:templates_list' %}"><button type="button" class="cancel-btn">Cancel</button></a>
+      <button type="submit" class="save-btn">Save Template</button>
+    </div>
+  </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Function to add a new formset item
+  function addFormsetItem(formsetPrefix) {
+    const container = document.getElementById(`${formsetPrefix}-formset-container`);
+    const managementForm = document.querySelector(`input[name="${formsetPrefix}-TOTAL_FORMS"]`);
+    let totalForms = parseInt(managementForm.value);
+
+    // Clone the first formset item (template)
+    const templateForm = container.querySelector(`.${formsetPrefix}-formset-item`);
+    if (!templateForm) {
+      console.error(`Template form for ${formsetPrefix} not found`);
+      return;
+    }
+    const newForm = templateForm.cloneNode(true);
+
+    // Update the form index in all input names and IDs
+    const regex = new RegExp(`${formsetPrefix}-\\d+`, 'g');
+    newForm.innerHTML = newForm.innerHTML.replace(regex, `${formsetPrefix}-${totalForms}`);
+
+    // Clear input values in the cloned form
+    newForm.querySelectorAll('input, textarea, select').forEach(input => {
+      if (input.type === 'file') {
+        input.value = ''; // Clear file inputs
+      } else if (input.type === 'checkbox' || input.type === 'radio') {
+        input.checked = false; // Uncheck checkboxes/radios
+      } else if (input.type !== 'hidden') {
+        input.value = ''; // Clear other inputs
+      }
+    });
+
+    // Ensure the DELETE hidden field is unchecked
+    const deleteField = newForm.querySelector(`input[name="${formsetPrefix}-${totalForms}-DELETE"]`);
+    if (deleteField) {
+      deleteField.checked = false;
+      deleteField.value = '';
+    }
+
+    // Ensure the ID hidden field is cleared (for new entries)
+    const idField = newForm.querySelector(`input[name="${formsetPrefix}-${totalForms}-id"]`);
+    if (idField) {
+      idField.value = '';
+    }
+
+    // Add or ensure delete button exists
+    let deleteBtn = newForm.querySelector('.delete-form-btn');
+    if (!deleteBtn) {
+      deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.className = 'delete-form-btn';
+      deleteBtn.innerHTML = '<i class="bi bi-trash"></i>';
+      newForm.appendChild(deleteBtn);
+    }
+    deleteBtn.onclick = function() {
+      const deleteInput = newForm.querySelector(`input[name="${formsetPrefix}-${totalForms}-DELETE"]`);
+      if (deleteInput) {
+        deleteInput.checked = true;
+        deleteInput.value = 'on';
+        newForm.style.display = 'none';
+      } else {
+        newForm.remove();
+      }
+    };
+
+    // Append the new form and increment the total forms count
+    container.appendChild(newForm);
+    managementForm.value = totalForms + 1;
+  }
+
+  // Add event listeners for "Add Another" buttons
+  document.querySelectorAll('.add-form-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const formsetPrefix = this.getAttribute('data-formset');
+      addFormsetItem(formsetPrefix);
+    });
+  });
+
+  // Add event listeners for existing delete buttons
+  document.querySelectorAll('.delete-form-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const formsetItem = this.parentElement;
+      const formsetPrefix = Array.from(formsetItem.classList)
+        .find(cls => cls.includes('-formset-item'))
+        .replace('-formset-item', '');
+      const index = formsetItem.querySelector(`input[name*="${formsetPrefix}-"][name$="-id"]`)
+        ?.name.match(/\d+/)[0];
+      if (index !== undefined) {
+        const deleteInput = formsetItem.querySelector(`input[name="${formsetPrefix}-${index}-DELETE"]`);
+        if (deleteInput) {
+          deleteInput.checked = true;
+          deleteInput.value = 'on';
+          formsetItem.style.display = 'none';
+          return;
+        }
+      }
+      formsetItem.remove();
+    });
+  });
+});
+</script>
+{% endblock %}

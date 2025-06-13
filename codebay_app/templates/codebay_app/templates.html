@@ -1,0 +1,422 @@
+{% extends 'codebay_app/base.html' %}
+{% block content %}
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #FFFFFF;
+      color: #333333;
+    }
+
+    /* Templates Section */
+    .templates-section {
+      padding: 4rem 0;
+      background-color: #F9F9F9;
+    }
+
+    .templates-container {
+      max-width: 80%;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .templates-title {
+      font-weight: 600;
+      font-size: 2.5rem;
+      color: #2C3E50;
+      margin-bottom: 1rem;
+      animation: fadeIn 1s ease-in;
+    }
+
+    .templates-description {
+      font-size: 1rem;
+      color: #333333;
+      margin-bottom: 2rem;
+      animation: fadeIn 1s ease-in 0.1s;
+      animation-fill-mode: both;
+    }
+
+    /* Filter Section */
+    .templates-filter {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      animation: fadeIn 1s ease-in 0.2s;
+      animation-fill-mode: both;
+    }
+
+    .templates-filter-btn {
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 400;
+      background-color: #FFFFFF;
+      color: #2C3E50;
+      border: 1px solid #3498DB;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      text-decoration: none;
+    }
+
+    .templates-filter-btn:hover,
+    .templates-filter-btn.active {
+      background-color: #3498DB;
+      color: #FFFFFF;
+    }
+
+    /* Sort Section */
+    .templates-sort {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      animation: fadeIn 1s ease-in 0.2s;
+      animation-fill-mode: both;
+    }
+
+    .templates-sort-btn {
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 400;
+      background-color: #FFFFFF;
+      color: #2C3E50;
+      border: 1px solid #3498DB;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      text-decoration: none;
+    }
+
+    .templates-sort-btn:hover,
+    .templates-sort-btn.active {
+      background-color: #3498DB;
+      color: #FFFFFF;
+    }
+
+    /* Templates Grid */
+    .templates-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      animation: fadeIn 1s ease-in 0.3s;
+      animation-fill-mode: both;
+    }
+
+    .template-card-enhanced {
+      background-color: #FFFFFF;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: center;
+    }
+
+    .template-card-enhanced:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .template-thumbnail {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-bottom: 0.75rem;
+    }
+
+    .template-title {
+      font-weight: 600;
+      font-size: 1.25rem;
+      color: #2C3E50;
+      margin-bottom: 0.25rem;
+    }
+
+    .template-title a {
+      color: #2C3E50;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .template-title a:hover {
+      color: #3498DB;
+    }
+
+    .template-category {
+      font-size: 0.9rem;
+      color: #3498DB;
+      margin-bottom: 0.25rem;
+    }
+
+    .template-rating {
+      display: flex;
+      justify-content: center;
+      gap: 0.3rem;
+      font-size: 0.9rem;
+      color: #F39C12;
+      margin-bottom: 0.25rem;
+    }
+
+    .template-description {
+      font-size: 0.85rem;
+      color: #333333;
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .template-tags {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .template-tag {
+      font-size: 0.8rem;
+      color: #FFFFFF;
+      background-color: #3498DB;
+      padding: 0.2rem 0.5rem;
+      border-radius: 12px;
+    }
+
+    .template-price {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #F39C12;
+      margin-bottom: 0.5rem;
+    }
+
+    .template-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .template-preview-btn,
+    .template-buy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.9rem;
+      font-weight: 400;
+      border: none;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .template-preview-btn {
+      background-color: #3498DB;
+      color: #FFFFFF;
+    }
+
+    .template-preview-btn:hover {
+      background-color: #F39C12;
+    }
+
+    .template-buy-btn {
+      background-color: #F39C12;
+      color: #FFFFFF;
+    }
+
+    .template-buy-btn:hover {
+      background-color: #3498DB;
+    }
+
+    /* Pagination */
+    .templates-pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-top: 2rem;
+      animation: fadeIn 1s ease-in 0.4s;
+      animation-fill-mode: both;
+    }
+
+    .pagination-btn {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      font-weight: 400;
+      background-color: #FFFFFF;
+      color: #2C3E50;
+      border: 1px solid #3498DB;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      text-decoration: none;
+    }
+
+    .pagination-btn:hover,
+    .pagination-btn.active {
+      background-color: #3498DB;
+      color: #FFFFFF;
+    }
+
+    .pagination-btn.disabled {
+      background-color: #E0E0E0;
+      color: #999999;
+      border: 1px solid #E0E0E0;
+      cursor: not-allowed;
+    }
+
+    /* Fade-in Animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 991px) {
+      .templates-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .templates-filter {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .templates-section {
+        padding: 3rem 0;
+      }
+      .templates-container {
+        max-width: 90%;
+      }
+      .templates-title {
+        font-size: 2rem;
+      }
+      .templates-description {
+        font-size: 0.9rem;
+      }
+      .templates-filter-btn,
+      .pagination-btn {
+        padding: 0.4rem 1rem;
+        font-size: 0.9rem;
+      }
+      .templates-grid {
+        grid-template-columns: 1fr;
+      }
+      .template-card-enhanced {
+        padding: 0.75rem;
+      }
+      .template-thumbnail {
+        height: 100px;
+      }
+      .template-title {
+        font-size: 1.1rem;
+      }
+      .template-category,
+      .template-rating,
+      .template-description,
+      .template-price {
+        font-size: 0.8rem;
+      }
+      .template-tag {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.4rem;
+      }
+      .template-preview-btn,
+      .template-buy-btn {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+
+  <!-- Templates Page Content -->
+  <section class="templates-section">
+    <div class="templates-container">
+      <h2 class="templates-title">Explore Our Templates</h2>
+      <p class="templates-description">
+        Discover a wide range of modern templates designed for portfolios, businesses, e-commerce, and more. Launch your website in minutes with our professionally crafted designs!
+      </p>
+
+      <!-- Filter Section -->
+      <div class="templates-filter">
+        <a href="{% url 'codebay_app:templates_list' %}?category=all&sort={{ sort_by }}" class="templates-filter-btn {% if category_filter == 'all' %}active{% endif %}" data-category="all">All</a>
+        <a href="{% url 'codebay_app:templates_list' %}?category=portfolio&sort={{ sort_by }}" class="templates-filter-btn {% if category_filter == 'portfolio' %}active{% endif %}" data-category="portfolio">Portfolio</a>
+        <a href="{% url 'codebay_app:templates_list' %}?category=business&sort={{ sort_by }}" class="templates-filter-btn {% if category_filter == 'business' %}active{% endif %}" data-category="business">Business</a>
+        <a href="{% url 'codebay_app:templates_list' %}?category=ecommerce&sort={{ sort_by }}" class="templates-filter-btn {% if category_filter == 'ecommerce' %}active{% endif %}" data-category="ecommerce">E-commerce</a>
+      </div>
+
+      <!-- Sort Section -->
+      <div class="templates-sort">
+        <a href="{% url 'codebay_app:templates_list' %}?category={{ category_filter }}&sort=" class="templates-sort-btn {% if not sort_by %}active{% endif %}">Newest</a>
+        <a href="{% url 'codebay_app:templates_list' %}?category={{ category_filter }}&sort=popular" class="templates-sort-btn {% if sort_by == 'popular' %}active{% endif %}">Popular</a>
+      </div>
+
+      <!-- Templates Grid -->
+      <div class="templates-grid" id="templates-grid">
+        {% if templates %}
+          {% for template in templates %}
+            <div class="template-card-enhanced" data-category="{{ template.category }}">
+              <img src="{% if template.images.first %}{{ template.images.first.image.url }}{% else %}https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80{% endif %}" alt="{{ template.name }}" class="template-thumbnail">
+              <h3 class="template-title">
+                <a href="{% url 'codebay_app:template_detail' template.id %}">{{ template.name }}</a>
+              </h3>
+              <p class="template-category">{{ template.get_category_display }}</p>
+              <div class="template-rating">
+                {% with stars=template.get_rating_stars %}
+                  {% for _ in stars.full %}
+                    <i class="bi bi-star-fill"></i>
+                  {% endfor %}
+                  {% for _ in stars.half %}
+                    <i class="bi bi-star-half"></i>
+                  {% endfor %}
+                  {% for _ in stars.empty %}
+                    <i class="bi bi-star"></i>
+                  {% endfor %}
+                  <span>({{ template.rating|floatformat:1 }}/5)</span>
+                {% endwith %}
+              </div>
+              <p class="template-description">{{ template.description|default:"A professionally designed template." }}</p>
+              <div class="template-tags">
+                {% for tech in template.tech_list %}
+                  <span class="template-tag">{{ tech }}</span>
+                {% endfor %}
+              </div>
+              <p class="template-price">{% if template.price == 0 %}Free{% else %}${{ template.price }}{% endif %}</p>
+              <div class="template-buttons">
+                <a href="{% url 'codebay_app:template_detail' template.id %}" class="template-preview-btn">
+                  Preview <i class="bi bi-eye"></i>
+                </a>
+                <a href="{% url 'codebay_app:cart_add' template.id %}" class="template-buy-btn">
+                  Buy Now <i class="bi bi-cart"></i>
+                </a>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p>No templates available for this category.</p>
+        {% endif %}
+      </div>
+
+      <!-- Pagination -->
+      <div class="templates-pagination" id="templates-pagination">
+        {% if templates.has_previous %}
+          <a href="{% url 'codebay_app:templates_list' %}?category={{ category_filter }}&sort={{ sort_by }}&page={{ templates.previous_page_number }}" class="pagination-btn">Previous</a>
+        {% else %}
+          <a href="#" class="pagination-btn disabled">Previous</a>
+        {% endif %}
+
+        {% for num in templates.paginator.page_range %}
+          <a href="{% url 'codebay_app:templates_list' %}?category={{ category_filter }}&sort={{ sort_by }}&page={{ num }}" class="pagination-btn {% if templates.number == num %}active{% endif %}">{{ num }}</a>
+        {% endfor %}
+
+        {% if templates.has_next %}
+          <a href="{% url 'codebay_app:templates_list' %}?category={{ category_filter }}&sort={{ sort_by }}&page={{ templates.next_page_number }}" class="pagination-btn">Next</a>
+        {% else %}
+          <a href="#" class="pagination-btn disabled">Next</a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

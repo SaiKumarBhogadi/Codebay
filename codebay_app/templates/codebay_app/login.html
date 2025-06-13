@@ -1,0 +1,190 @@
+{% extends 'codebay_app/base.html' %}
+{% block content %}
+  <style>
+    .login {
+      font-family: 'Poppins', sans-serif;
+      background-color: #F5F7FA;
+      color: #2C3E50;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .login-container {
+      max-width: 400px;
+      width: 100%;
+      padding: 0 1rem;
+    }
+
+    .login-form {
+      background-color: #FFFFFF;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 1s ease-in;
+    }
+
+    .login-form h2 {
+      font-weight: 600;
+      font-size: 1.75rem;
+      color: #2C3E50;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: #2C3E50;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      border: 1px solid #E0E4E8;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+      border-color: #3498DB;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+
+    .forgot-password {
+      display: block;
+      text-align: right;
+      font-size: 0.85rem;
+      color: #3498DB;
+      text-decoration: none;
+      margin-bottom: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    .forgot-password:hover {
+      color: #F39C12;
+    }
+
+    .login-button {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      font-weight: 400;
+      background-color: #3498DB;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+    }
+
+    .login-button:hover {
+      background-color: #F39C12;
+      transform: translateY(-2px);
+    }
+
+    .signup-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: #2C3E50;
+    }
+
+    .signup-link a {
+      color: #3498DB;
+      text-decoration: none;
+      font-weight: 400;
+      transition: color 0.3s ease;
+    }
+
+    .signup-link a:hover {
+      color: #F39C12;
+    }
+
+    .error-message {
+      color: #E74C3C;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 576px) {
+      .login-container {
+        padding: 0 0.5rem;
+      }
+
+      .login-form {
+        padding: 1.5rem;
+      }
+
+      .login-form h2 {
+        font-size: 1.5rem;
+      }
+
+      .form-group label {
+        font-size: 0.9rem;
+      }
+
+      .form-group input {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+      }
+
+      .forgot-password {
+        font-size: 0.8rem;
+      }
+
+      .login-button {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+      }
+
+      .signup-link {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+  <div class="login">
+    <div class="login-container">
+      <div class="login-form">
+        <h2>Login to Your Account</h2>
+        {% if messages %}
+          {% for message in messages %}
+            <p class="error-message {{ message.tags }}">{{ message }}</p>
+          {% endfor %}
+        {% endif %}
+        <form method="POST">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" placeholder="john@example.com" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password *</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+          </div>
+          <a href="{% url 'codebay_app:password_reset_request' %}" class="forgot-password">Forgot Password?</a>
+          <button type="submit" class="login-button">Login</button>
+        </form>
+        <p class="signup-link">Don't have an account? <a href="{% url 'codebay_app:register' %}">Sign Up</a></p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

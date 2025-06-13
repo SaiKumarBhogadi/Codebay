@@ -1,0 +1,308 @@
+{% extends "admin_panel/base.html" %}
+{% block title %}Users Management{% endblock %}
+{% block header_title %}Users Management{% endblock %}
+{% block content %}
+  <style>
+    .search-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .search-section .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .search-section .search-row {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .search-section input {
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      border: 1px solid #E0E4E8;
+      border-radius: 6px;
+      width: 300px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    .search-section input:focus {
+      border-color: #3498DB;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    .search-section button,
+    .header-row button {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.95rem;
+      background-color: #FFFFFF;
+      color: #2C3E50;
+      border: 1px solid #E0E4E8;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .header-row button {
+      background-color: #3498DB;
+      color: #FFFFFF;
+      border: none;
+    }
+    .search-section button:hover,
+    .header-row button:hover {
+      background-color: #F39C12;
+      color: #FFFFFF;
+    }
+    .users-section {
+      overflow-x: auto; /* Enable horizontal scrolling on small screens */
+    }
+    .users-section table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px; /* Ensure table doesn't shrink too much */
+    }
+    .users-section th,
+    .users-section td {
+      padding: 0.75rem;
+      text-align: left;
+      font-size: 0.9rem;
+      color: #2C3E50;
+    }
+    .users-section th {
+      background-color: #F5F7FA;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .users-section td {
+      border-bottom: 1px solid #E0E4E8;
+    }
+    .users-section tr:last-child td {
+      border-bottom: none;
+    }
+    .users-section .status {
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+    }
+    .users-section .status.active {
+      background-color: rgba(52, 152, 219, 0.1);
+      color: #3498DB;
+    }
+    .users-section .status.inactive {
+      background-color: rgba(243, 156, 18, 0.1);
+      color: #F39C12;
+    }
+    .users-section .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .users-section .action-btn {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      white-space: nowrap;
+    }
+    .users-section .action-btn.edit {
+      background-color: #3498DB;
+      color: #FFFFFF;
+    }
+    .users-section .action-btn.delete {
+      background-color: #F39C12;
+      color: #FFFFFF;
+    }
+    .users-section .action-btn.edit:hover {
+      background-color: #F39C12;
+    }
+    .users-section .action-btn.delete:hover {
+      background-color: #E67E22;
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
+    .pagination a {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      color: #2C3E50;
+      border: 1px solid #E0E4E8;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .pagination a.active {
+      background-color: #3498DB;
+      color: #FFFFFF;
+      border-color: #3498DB;
+    }
+    .pagination a:hover {
+      background-color: #F39C12;
+      color: #FFFFFF;
+      border-color: #F39C12;
+    }
+    .error-message {
+      color: #E74C3C;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    /* Medium Screens (Tablets, 768px and below) */
+    @media (max-width: 768px) {
+      .search-section .header-row {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+      .search-section .search-row {
+        flex-direction: column;
+        width: 100%;
+      }
+      .search-section input {
+        width: 100%;
+      }
+      .search-section button,
+      .header-row button {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+      .users-section th,
+      .users-section td {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+      }
+      .users-section .action-buttons {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .users-section .action-btn {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Small Screens (Mobile, 576px and below) */
+    @media (max-width: 576px) {
+      .search-section input {
+        width: 100%;
+      }
+      .users-section th,
+      .users-section td {
+        font-size: 0.75rem;
+        padding: 0.4rem;
+      }
+      .users-section .action-buttons {
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+      .users-section .action-btn {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+      }
+      .pagination a {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+      }
+    }
+
+    /* Large Screens (Desktops, 1200px and above) */
+    @media (min-width: 1200px) {
+      .search-section input {
+        width: 400px;
+      }
+      .users-section th,
+      .users-section td {
+        font-size: 1rem;
+        padding: 1rem;
+      }
+      .users-section .action-buttons {
+        gap: 0.75rem;
+      }
+      .users-section .action-btn {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+      }
+    }
+  </style>
+
+  <!-- Search and Add User Section -->
+  <div class="section search-section">
+    {% if messages %}
+      {% for message in messages %}
+        <p class="error-message {{ message.tags }}">{{ message }}</p>
+      {% endfor %}
+    {% endif %}
+    <div class="header-row">
+      <h3>Users List</h3>
+      <a href="{% url 'admin_panel:add_user' %}"><button>Add User</button></a>
+    </div>
+    <form method="GET" class="search-row">
+      <input type="text" name="search" placeholder="Search users..." value="{{ search_query|default:'' }}">
+      <button type="submit"><i class="bi bi-funnel"></i> Filter</button>
+    </form>
+  </div>
+
+  <!-- Users Table Section -->
+  <div class="section users-section">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+          <tr>
+            <td>{{ user.full_name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.is_staff|yesno:"Admin,User" }}</td>
+            <td><span class="status {{ user.is_active|yesno:'active,inactive' }}">{{ user.is_active|yesno:"Active,Inactive" }}</span></td>
+            <td>
+              <div class="action-buttons">
+                <a href="{% url 'admin_panel:edit_user' user.id %}"><button class="action-btn edit">Edit</button></a>
+                <form method="POST" action="{% url 'admin_panel:delete_user' user.id %}" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="action-btn delete" onclick="return confirm('Are you sure you want to delete {{ user.full_name }}?');">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5">No users found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    {% if users.has_other_pages %}
+      <div class="pagination">
+        {% if users.has_previous %}
+          <a href="?page={{ users.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Previous</a>
+        {% endif %}
+        {% for num in users.paginator.page_range %}
+          <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}" {% if users.number == num %}class="active"{% endif %}>{{ num }}</a>
+        {% endfor %}
+        {% if users.has_next %}
+          <a href="?page={{ users.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Next</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

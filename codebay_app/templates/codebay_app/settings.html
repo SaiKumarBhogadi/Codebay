@@ -1,0 +1,230 @@
+{% extends "codebay_app/base.html" %}
+{% block content %}
+  <style>
+    /* Settings Container */
+    .settings-container {
+      padding: 3rem 1.5rem;
+      background-color: #F5F7FA;
+      min-height: calc(100vh - 200px); /* Adjust for navbar and footer */
+    }
+
+    .settings-title {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #2C3E50;
+      text-align: center;
+      margin-bottom: 2rem;
+      animation: fadeIn 1s ease-in;
+    }
+
+    /* Settings Sections */
+    .settings-sections {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .settings-card {
+      background-color: #FFFFFF;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 1s ease-in;
+    }
+
+    .settings-card h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #2C3E50;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Form Styling */
+    .settings-form .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .settings-form label {
+      font-size: 0.95rem;
+      color: #2C3E50;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .settings-form input,
+    .settings-form textarea {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      border: 1px solid #E0E4E8;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .settings-form input:focus,
+    .settings-form textarea:focus {
+      border-color: #3498DB;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+
+    .settings-form .form-btn {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.95rem;
+      background-color: #3498DB;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 1rem;
+    }
+
+    .settings-form .form-btn:hover {
+      background-color: #F39C12;
+    }
+
+    /* Error/Success Messages */
+    .messages {
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .messages .success {
+      color: #2ECC71;
+      font-size: 0.95rem;
+    }
+
+    .messages .error {
+      color: #E74C3C;
+      font-size: 0.95rem;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .settings-container {
+        padding: 2rem 1rem;
+      }
+
+      .settings-title {
+        font-size: 1.75rem;
+      }
+
+      .settings-sections {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .settings-card {
+        padding: 1.5rem;
+      }
+
+      .settings-card h3 {
+        font-size: 1.25rem;
+      }
+
+      .settings-form input,
+      .settings-form textarea {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+      }
+
+      .settings-form .form-btn {
+        width: 100%;
+        padding: 0.5rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .settings-container {
+        padding: 1.5rem 0.75rem;
+      }
+
+      .settings-title {
+        font-size: 1.5rem;
+      }
+
+      .settings-card {
+        padding: 1rem;
+      }
+
+      .settings-card h3 {
+        font-size: 1.1rem;
+      }
+
+      .settings-form label {
+        font-size: 0.9rem;
+      }
+
+      .settings-form input,
+      .settings-form textarea {
+        font-size: 0.85rem;
+      }
+
+      .settings-form .form-btn {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+
+  <div class="settings-container">
+    <h2 class="settings-title">Settings</h2>
+
+    <!-- Messages -->
+    <div class="messages">
+      {% if messages %}
+        {% for message in messages %}
+          <p class="{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    <!-- Settings Sections -->
+    <div class="settings-sections">
+      <!-- Profile Settings -->
+      <div class="settings-card">
+        <h3>Profile Settings</h3>
+        <form class="settings-form" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="hidden" name="update_profile" value="1">
+          {% for field in profile_form %}
+            <div class="form-group">
+              {{ field.label_tag }}
+              {{ field }}
+              {% if field.errors %}
+                {% for error in field.errors %}
+                  <p class="error">{{ error }}</p>
+                {% endfor %}
+              {% endif %}
+            </div>
+          {% endfor %}
+          <button type="submit" class="form-btn">Update Profile</button>
+        </form>
+      </div>
+
+      <!-- Change Password -->
+      <div class="settings-card">
+        <h3>Change Password</h3>
+        <form class="settings-form" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="change_password" value="1">
+          {% for field in password_form %}
+            <div class="form-group">
+              {{ field.label_tag }}
+              {{ field }}
+              {% if field.errors %}
+                {% for error in field.errors %}
+                  <p class="error">{{ error }}</p>
+                {% endfor %}
+              {% endif %}
+            </div>
+          {% endfor %}
+          <button type="submit" class="form-btn">Change Password</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

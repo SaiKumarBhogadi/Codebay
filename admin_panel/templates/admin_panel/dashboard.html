@@ -1,0 +1,167 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block header_title %}Dashboard Overview{% endblock %}
+
+{% block content %}
+  <style>
+    /* Stats Section */
+    .stats-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background-color: #FFFFFF;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-left: 5px solid #3498DB;
+      animation: fadeIn 1s ease-in;
+    }
+
+    .stat-card h4 {
+      font-weight: 600;
+      font-size: 1.25rem;
+      color: #2C3E50;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-card p {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #3498DB;
+      margin: 0;
+    }
+
+    /* Activity Table */
+    .activity-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .activity-table th,
+    .activity-table td {
+      padding: 0.75rem;
+      text-align: left;
+      font-size: 0.9rem;
+      color: #2C3E50;
+    }
+
+    .activity-table th {
+      background-color: #F5F7FA;
+      font-weight: 600;
+    }
+
+    .activity-table td {
+      border-bottom: 1px solid #E0E4E8;
+    }
+
+    .activity-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .activity-table .status {
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+    }
+
+    .activity-table .status.completed {
+      background-color: rgba(52, 152, 219, 0.1);
+      color: #3498DB;
+    }
+
+    .activity-table .status.pending {
+      background-color: rgba(243, 156, 18, 0.1);
+      color: #F39C12;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .stat-card h4 {
+        font-size: 1.1rem;
+      }
+      .stat-card p {
+        font-size: 1.25rem;
+      }
+      .activity-table th,
+      .activity-table td {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .stat-card h4 {
+        font-size: 1rem;
+      }
+      .stat-card p {
+        font-size: 1.1rem;
+      }
+      .activity-table {
+        font-size: 0.8rem;
+      }
+      .activity-table th,
+      .activity-table td {
+        padding: 0.5rem;
+      }
+    }
+  </style>
+
+  <!-- Welcome Section -->
+  <div class="section welcome-section">
+    <h3>Welcome, Admin!</h3>
+    <p>Here's a quick overview of your platform as of {{ current_time|date:"F d, Y, h:i A T" }}.</p>
+  </div>
+
+  <!-- Stats Section -->
+  <div class="stats-section">
+    <div class="stat-card">
+      <h4>Total Users</h4>
+      <p>{{ total_users }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Active Templates</h4>
+      <p>{{ active_templates }}</p>
+    </div>
+  </div>
+
+  <!-- Recent Activity Section -->
+  <div class="section activity-section">
+    <h3>Recent Activity</h3>
+    <table class="activity-table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Action</th>
+          <th>Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for activity in recent_activities %}
+          <tr>
+            <td>{{ activity.user.full_name }}</td>
+            <td>
+              {% if activity.template %}
+                {{ activity.action }}: {{ activity.template.name }}
+              {% else %}
+                {{ activity.action }}
+              {% endif %}
+            </td>
+            <td>{{ activity.date|date:"F d, Y" }}</td>
+            <td><span class="status {{ activity.status }}">{{ activity.status|capfirst }}</span></td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4">No recent activities found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

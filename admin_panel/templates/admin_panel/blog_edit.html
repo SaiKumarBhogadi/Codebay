@@ -1,0 +1,236 @@
+{% extends "admin_panel/base.html" %}
+{% block title %}Edit Blog Post{% endblock %}
+{% block header_title %}Edit Blog Post{% endblock %}
+{% block content %}
+  <style>
+    .edit-blog {
+      font-family: 'Poppins', sans-serif;
+      background-color: #F5F7FA;
+      color: #2C3E50;
+      margin: 0;
+      padding: 2rem;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .edit-blog-container {
+      max-width: 500px;
+      width: 100%;
+      padding: 0 1.5rem;
+    }
+    .edit-blog-form {
+      background-color: #FFFFFF;
+      padding: 2.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .edit-blog-form h2 {
+      font-weight: 600;
+      font-size: 1.75rem;
+      color: #2C3E50;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: #2C3E50;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group textarea,
+    .form-group select,
+    .form-group input[type="file"] {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      border: 1px solid #E0E4E8;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: #3498DB;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    .form-group input[type="checkbox"] {
+      margin-right: 0.5rem;
+    }
+    .submit-button {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      background-color: #3498DB;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .submit-button:hover {
+      background-color: #F39C12;
+    }
+    .error-message {
+      color: #E74C3C;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .form-error {
+      color: #E74C3C;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      color: #3498DB;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.3s ease;
+    }
+    .back-link:hover {
+      color: #F39C12;
+    }
+
+    /* Large Screens (Desktops, 1200px and above) */
+    @media (min-width: 1200px) {
+      .edit-blog-container {
+        max-width: 600px;
+      }
+      .edit-blog-form {
+        padding: 3rem;
+      }
+      .edit-blog-form h2 {
+        font-size: 2rem;
+      }
+      .form-group label {
+        font-size: 1rem;
+      }
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        font-size: 1rem;
+        padding: 0.85rem;
+      }
+      .submit-button {
+        font-size: 1.1rem;
+        padding: 0.85rem;
+      }
+      .back-link {
+        font-size: 1rem;
+      }
+    }
+
+    /* Medium Screens (Tablets, 768px and below) */
+    @media (max-width: 768px) {
+      .edit-blog {
+        padding: 1.5rem;
+      }
+      .edit-blog-container {
+        max-width: 450px;
+        padding: 0 1rem;
+      }
+      .edit-blog-form {
+        padding: 2rem;
+      }
+      .edit-blog-form h2 {
+        font-size: 1.6rem;
+      }
+      .form-group label {
+        font-size: 0.9rem;
+      }
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        font-size: 0.9rem;
+        padding: 0.65rem;
+      }
+      .submit-button {
+        font-size: 0.95rem;
+        padding: 0.65rem;
+      }
+      .error-message,
+      .form-error {
+        font-size: 0.8rem;
+      }
+      .back-link {
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Small Screens (Mobile, 576px and below) */
+    @media (max-width: 576px) {
+      .edit-blog {
+        padding: 1rem;
+      }
+      .edit-blog-container {
+        max-width: 100%;
+        padding: 0 0.5rem;
+      }
+      .edit-blog-form {
+        padding: 1.5rem;
+      }
+      .edit-blog-form h2 {
+        font-size: 1.5rem;
+      }
+      .form-group label {
+        font-size: 0.85rem;
+      }
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+      }
+      .submit-button {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+      }
+      .error-message,
+      .form-error {
+        font-size: 0.75rem;
+      }
+      .back-link {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+  <div class="edit-blog">
+    <div class="edit-blog-container">
+      <div class="edit-blog-form">
+        <h2>Edit Blog Post: {{ blog_post.title }}</h2>
+        {% if messages %}
+          {% for message in messages %}
+            <p class="error-message {{ message.tags }}">{{ message }}</p>
+          {% endfor %}
+        {% endif %}
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% for field in form %}
+            <div class="form-group">
+              {{ field.label_tag }}
+              {{ field }}
+              {% if field.errors %}
+                <div class="form-error">
+                  {{ field.errors }}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <button type="submit" class="submit-button">Update Blog Post</button>
+        </form>
+        <a href="{% url 'admin_panel:admin_blog_list' %}" class="back-link">Back to Blog Posts</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

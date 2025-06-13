@@ -1,0 +1,469 @@
+{% extends "admin_panel/base.html" %}
+{% block title %}Templates Management{% endblock %}
+{% block header_title %}Templates Management{% endblock %}
+{% block content %}
+  <style>
+    .stats-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background-color: #FFFFFF;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-left: 5px solid #3498DB;
+      animation: fadeIn 1s ease-in;
+    }
+    .stat-card h4 {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #2C3E50;
+      margin-bottom: 0.5rem;
+    }
+    .stat-card p {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #3498DB;
+      margin: 0;
+    }
+    .search-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .search-section .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .search-section .search-row {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .search-section input {
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      border: 1px solid #E0E4E8;
+      border-radius: 6px;
+      width: 300px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    .search-section input:focus {
+      border-color: #3498DB;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    .search-section select {
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      border: 1px solid #E0E4E8;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    .search-section button,
+    .header-row button {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.95rem;
+      background-color: #FFFFFF;
+      color: #2C3E50;
+      border: 1px solid #E0E4E8;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .header-row button {
+      background-color: #3498DB;
+      color: #FFFFFF;
+      border: none;
+    }
+    .search-section button:hover,
+    .header-row button:hover {
+      background-color: #F39C12;
+      color: #FFFFFF;
+    }
+    .templates-section {
+      overflow-x: auto; /* Enable horizontal scrolling on small screens */
+    }
+    .templates-section table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px; /* Ensure table doesn't shrink too much on small screens */
+    }
+    .templates-section th,
+    .templates-section td {
+      padding: 0.75rem;
+      text-align: left;
+      font-size: 0.9rem;
+      color: #2C3E50;
+    }
+    .templates-section th {
+      background-color: #F5F7FA;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .templates-section td {
+      border-bottom: 1px solid #E0E4E8;
+    }
+    .templates-section tr:last-child td {
+      border-bottom: none;
+    }
+    .templates-section .template-image {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    .templates-section .price,
+    .templates-section .status {
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+    }
+    .templates-section .price.free {
+      background-color: rgba(52, 152, 219, 0.1);
+      color: #3498DB;
+    }
+    .templates-section .price.paid {
+      background-color: rgba(243, 156, 18, 0.1);
+      color: #F39C12;
+    }
+    .templates-section .status.active {
+      background-color: rgba(52, 152, 219, 0.1);
+      color: #3498DB;
+    }
+    .templates-section .status.inactive {
+      background-color: rgba(243, 156, 18, 0.1);
+      color: #F39C12;
+    }
+    .templates-section .status.pending {
+      background-color: rgba(149, 165, 166, 0.1);
+      color: #95A5A6;
+    }
+    .templates-section .preview-link {
+      color: #3498DB;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .templates-section .preview-link:hover {
+      color: #F39C12;
+    }
+    .templates-section .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .templates-section .action-btn {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      white-space: nowrap;
+    }
+    .templates-section .action-btn.edit {
+      background-color: #3498DB;
+      color: #FFFFFF;
+    }
+    .templates-section .action-btn.delete {
+      background-color: #F39C12;
+      color: #FFFFFF;
+    }
+    .templates-section .action-btn.toggle {
+      background-color: #95A5A6;
+      color: #FFFFFF;
+    }
+    .templates-section .action-btn.edit:hover {
+      background-color: #F39C12;
+    }
+    .templates-section .action-btn.delete:hover {
+      background-color: #E67E22;
+    }
+    .templates-section .action-btn.toggle:hover {
+      background-color: #7F8C8D;
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
+    .pagination a {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      color: #2C3E50;
+      border: 1px solid #E0E4E8;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .pagination a.active {
+      background-color: #3498DB;
+      color: #FFFFFF;
+      border-color: #3498DB;
+    }
+    .pagination a:hover {
+      background-color: #F39C12;
+      color: #FFFFFF;
+      border-color: #F39C12;
+    }
+    .error-message {
+      color: #E74C3C;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    /* Medium Screens (Tablets, 768px and below) */
+    @media (max-width: 768px) {
+      .stats-section {
+        grid-template-columns: 1fr;
+      }
+      .stat-card h4 {
+        font-size: 1rem;
+      }
+      .stat-card p {
+        font-size: 1.1rem;
+      }
+      .search-section .header-row {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+      .search-section .search-row {
+        flex-direction: column;
+        width: 100%;
+      }
+      .search-section input,
+      .search-section select {
+        width: 100%;
+      }
+      .search-section button,
+      .header-row button {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+      .templates-section th,
+      .templates-section td {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+      }
+      .templates-section .action-buttons {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .templates-section .action-btn {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Small Screens (Mobile, 576px and below) */
+    @media (max-width: 576px) {
+      .stats-section {
+        grid-template-columns: 1fr;
+      }
+      .stat-card h4 {
+        font-size: 0.9rem;
+      }
+      .stat-card p {
+        font-size: 1rem;
+      }
+      .search-section input {
+        width: 100%;
+      }
+      .search-section select {
+        width: 100%;
+      }
+      .templates-section th,
+      .templates-section td {
+        font-size: 0.75rem;
+        padding: 0.4rem;
+      }
+      .templates-section .template-image {
+        width: 40px;
+        height: 40px;
+      }
+      .templates-section .action-buttons {
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+      .templates-section .action-btn {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+      }
+      .pagination a {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+      }
+    }
+
+    /* Large Screens (Desktops, 1200px and above) */
+    @media (min-width: 1200px) {
+      .stats-section {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .stat-card h4 {
+        font-size: 1.2rem;
+      }
+      .stat-card p {
+        font-size: 1.5rem;
+      }
+      .search-section input {
+        width: 400px;
+      }
+      .search-section select {
+        width: 200px;
+      }
+      .templates-section th,
+      .templates-section td {
+        font-size: 1rem;
+        padding: 1rem;
+      }
+      .templates-section .action-buttons {
+        gap: 0.75rem;
+      }
+      .templates-section .action-btn {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+      }
+    }
+  </style>
+
+  {% if messages %}
+    {% for message in messages %}
+      <p class="error-message {{ message.tags }}">{{ message }}</p>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Stats Section -->
+  <div class="section stats-section">
+    <div class="stat-card">
+      <h4>Total Templates</h4>
+      <p>{{ total_templates }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Active Templates</h4>
+      <p>{{ active_templates }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Priced Templates</h4>
+      <p>{{ priced_templates }}</p>
+    </div>
+  </div>
+
+  <!-- Search and Add Template Section -->
+  <div class="section search-section">
+    <div class="header-row">
+      <h3>Templates List</h3>
+      <a href="{% url 'admin_panel:templates_add' %}"><button>Add Template</button></a>
+    </div>
+    <form method="GET" class="search-row">
+      <input type="text" name="search" placeholder="Search templates..." value="{{ search_query|default:'' }}">
+      <select name="category">
+        <option value="">All Categories</option>
+        <option value="portfolio" {% if category_filter == 'portfolio' %}selected{% endif %}>Portfolio</option>
+        <option value="ecommerce" {% if category_filter == 'ecommerce' %}selected{% endif %}>E-commerce</option>
+        <option value="business" {% if category_filter == 'business' %}selected{% endif %}>Business</option>
+      </select>
+      <button type="submit"><i class="bi bi-funnel"></i> Filter</button>
+    </form>
+  </div>
+
+  <!-- Templates Table Section -->
+  <div class="section templates-section">
+    <table>
+      <thead>
+        <tr>
+          <th><input type="checkbox"></th>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th>Preview</th>
+          <th>Downloads</th>
+          <th>Added On</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for template in templates %}
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>
+              {% if template.images.first %}
+                <img src="{{ template.images.first.image.url }}" class="template-image" alt="{{ template.name }}">
+              {% else %}
+                <img src="https://via.placeholder.com/50" class="template-image" alt="No Image">
+              {% endif %}
+            </td>
+            <td>{{ template.name }}</td>
+            <td>{{ template.get_category_display }}</td>
+            <td>
+              <span class="price {% if template.price == 0 %}free{% else %}paid{% endif %}">
+                {% if template.price == 0 %}Free{% else %}${{ template.price }}{% endif %}
+              </span>
+            </td>
+            <td><span class="status {{ template.status }}">{{ template.get_status_display }}</span></td>
+            <td>
+              {% if template.preview_url %}
+                <a href="{{ template.preview_url }}" class="preview-link" target="_blank">View</a>
+              {% else %}
+                N/A
+              {% endif %}
+            </td>
+            <td>{{ template.downloads }}</td>
+            <td>{{ template.created_at|date:"M d, Y" }}</td>
+            <td>
+              <div class="action-buttons">
+                <a href="{% url 'admin_panel:templates_edit' template.id %}"><button class="action-btn edit">Edit</button></a>
+                <form method="POST" action="{% url 'admin_panel:templates_toggle' template.id %}" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="action-btn toggle">
+                    {% if template.status == 'active' %}Deactivate{% else %}Activate{% endif %}
+                  </button>
+                </form>
+                <form method="POST" action="{% url 'admin_panel:templates_delete' template.id %}" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="action-btn delete" onclick="return confirm('Are you sure you want to delete {{ template.name }}?');">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="10">No templates found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    {% if templates.has_other_pages %}
+      <div class="pagination">
+        {% if templates.has_previous %}
+          <a href="?page={{ templates.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">Previous</a>
+        {% endif %}
+        {% for num in templates.paginator.page_range %}
+          <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}" {% if templates.number == num %}class="active"{% endif %}>{{ num }}</a>
+        {% endfor %}
+        {% if templates.has_next %}
+          <a href="?page={{ templates.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">Next</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

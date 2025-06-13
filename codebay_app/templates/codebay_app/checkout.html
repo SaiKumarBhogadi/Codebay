@@ -1,0 +1,172 @@
+{% extends 'codebay_app/base.html' %}
+{% block content %}
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #F5F7FA;
+    color: #2C3E50;
+    margin: 0;
+    padding: 0;
+  }
+  .checkout-section {
+    padding: 3rem 0;
+  }
+  .checkout-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    gap: 2rem;
+  }
+  .order-summary, .checkout-form {
+    flex: 1;
+    background-color: #FFFFFF;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  .checkout-title {
+    font-weight: 600;
+    font-size: 2rem;
+    color: #2C3E50;
+    margin-bottom: 1.5rem;
+  }
+  .order-summary h3, .checkout-form h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2C3E50;
+    margin-bottom: 1rem;
+  }
+  .order-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e0e4e8;
+  }
+  .order-item span {
+    color: #495057;
+  }
+  .order-total {
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+  }
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    color: #2C3E50;
+    margin-bottom: 0.5rem;
+  }
+  .form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e0e4e8;
+    border-radius: 4px;
+    font-size: 1rem;
+    color: #495057;
+  }
+  .form-control:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.2);
+  }
+  .confirm-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .confirm-btn:hover {
+    background-color: #f39c12;
+  }
+  @media (max-width: 768px) {
+    .checkout-container {
+      flex-direction: column;
+    }
+    .order-summary, .checkout-form {
+      padding: 1.5rem;
+    }
+    .checkout-title {
+      font-size: 1.75rem;
+    }
+    .order-summary h3, .checkout-form h3 {
+      font-size: 1.25rem;
+    }
+  }
+  @media (max-width: 576px) {
+    .checkout-container {
+      padding: 0 0.5rem;
+    }
+    .order-summary, .checkout-form {
+      padding: 1rem;
+    }
+    .checkout-title {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+
+<section class="checkout-section">
+  <div class="checkout-container">
+    <!-- Order Summary -->
+    <div class="order-summary">
+      <h3>Order Summary</h3>
+      {% for item in cart.items.all %}
+        <div class="order-item">
+          <span>{{ item.template.name }} (x{{ item.quantity }})</span>
+          <span>Rs &nbsp;{{ item.subtotal }}</span>
+        </div>
+      {% endfor %}
+      <div class="order-total">
+        <span>Total:</span>
+        <span>Rs &nbsp;{{ cart.total_price }}</span>
+      </div>
+    </div>
+
+    <!-- Checkout Form -->
+    <div class="checkout-form">
+      <h3 class="checkout-title">Checkout</h3>
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" class="form-control" value="{{ request.user.full_name|default:request.user.email }}" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" class="form-control" value="{{ request.user.email }}" required>
+        </div>
+        <div class="form-group">
+          <label for="payment_method">Payment Method</label>
+          <select id="payment_method" name="payment_method" class="form-control" required>
+            <option value="credit_card">Credit Card</option>
+            <option value="paypal">PayPal</option>
+            <option value="bank_transfer">Bank Transfer</option>
+          </select>
+        </div>
+        <!-- Add more fields as needed (e.g., billing address, payment details) -->
+        <button type="submit" class="confirm-btn">Confirm Purchase</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

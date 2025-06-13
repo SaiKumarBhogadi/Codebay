@@ -1,0 +1,333 @@
+{% extends "codebay_app/base.html" %}
+{% block title %}{{ tutorial.title }}{% endblock %}
+{% block content %}
+  <style>
+    .tutorial-detail {
+      width: 80%; /* 80% width for 10% space on each side */
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+      display: flex;
+      gap: 1.5rem;
+      animation: fadeIn 1s ease-in;
+    }
+
+    .main-content {
+      flex: 3;
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+    }
+
+    .tutorial-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .tutorial-header h1 {
+      font-weight: 600;
+      font-size: 1.75rem;
+      color: #2C3E50;
+      margin-bottom: 0.75rem;
+    }
+
+    .tutorial-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: #555555;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .tutorial-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .tutorial-label {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.85rem;
+      color: #FFFFFF;
+      border-radius: 12px;
+    }
+
+    .tutorial-label.beginner {
+      background-color: #2ECC71;
+    }
+
+    .tutorial-label.intermediate {
+      background-color: #F39C12;
+    }
+
+    .tutorial-label.advanced {
+      background-color: #E74C3C;
+    }
+
+    .tutorial-content {
+      margin-bottom: 1.5rem;
+    }
+
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      height: 0;
+      overflow: hidden;
+      border-radius: 6px;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .text-content {
+      font-size: 0.95rem;
+      color: #2C3E50;
+      line-height: 1.6;
+    }
+
+    .text-content p {
+      margin-bottom: 1rem;
+    }
+
+    .sidebar {
+      flex: 1;
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+    }
+
+    .sidebar h3 {
+      font-weight: 600;
+      font-size: 1.25rem;
+      color: #2C3E50;
+      margin-bottom: 1rem;
+    }
+
+    .related-tutorials {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .related-card {
+      background-color: #F9F9F9;
+      border-radius: 6px;
+      padding: 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .related-card:hover {
+      background-color: #E0E4E8;
+    }
+
+    .related-card img {
+      width: 100%;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
+
+    .related-card h4 {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #2C3E50;
+      margin-bottom: 0.5rem;
+    }
+
+    .related-card a {
+      text-decoration: none;
+      color: #3498DB;
+      font-size: 0.85rem;
+      transition: color 0.3s ease;
+    }
+
+    .related-card a:hover {
+      color: #F39C12;
+    }
+
+    .cta-section {
+      background: linear-gradient(135deg, #3498DB 0%, #2C3E50 100%);
+      color: #FFFFFF;
+      text-align: center;
+      padding: 2rem 1rem;
+      margin-top: 2rem;
+      animation: fadeIn 1s ease-in 0.8s;
+    }
+
+    .cta-section-content {
+      width: 80%; /* 80% width for 10% space on each side */
+      margin: 0 auto;
+    }
+
+    .cta-section h3 {
+      font-weight: 600;
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-section p {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .cta-btn {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.95rem;
+      background-color: #F39C12;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .cta-btn:hover {
+      background-color: #E67E22;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .tutorial-detail {
+        flex-direction: column;
+        padding: 1rem 0.75rem;
+      }
+
+      .main-content, .sidebar {
+        padding: 1rem;
+      }
+
+      .tutorial-header h1 {
+        font-size: 1.5rem;
+      }
+
+      .tutorial-meta {
+        font-size: 0.8rem;
+      }
+
+      .text-content {
+        font-size: 0.9rem;
+      }
+
+      .sidebar h3 {
+        font-size: 1.1rem;
+      }
+
+      .related-card h4 {
+        font-size: 0.9rem;
+      }
+
+      .cta-section {
+        padding: 1.5rem 0.75rem;
+      }
+
+      .cta-section h3 {
+        font-size: 1.25rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .tutorial-detail {
+        padding: 0.75rem 0.5rem;
+      }
+
+      .main-content, .sidebar {
+        padding: 0.75rem;
+      }
+
+      .tutorial-header h1 {
+        font-size: 1.25rem;
+      }
+
+      .tutorial-meta {
+        font-size: 0.75rem;
+        gap: 0.5rem;
+      }
+
+      .text-content {
+        font-size: 0.85rem;
+      }
+
+      .sidebar h3 {
+        font-size: 1rem;
+      }
+
+      .related-card img {
+        height: 60px;
+      }
+
+      .related-card h4 {
+        font-size: 0.85rem;
+      }
+
+      .cta-section h3 {
+        font-size: 1.1rem;
+      }
+
+      .cta-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+
+  <!-- Tutorial Detail Section -->
+  <section class="tutorial-detail">
+    <div class="main-content">
+      <div class="tutorial-header">
+        <h1>{{ tutorial.title }}</h1>
+        <div class="tutorial-meta">
+          <span><i class="bi bi-tag"></i> {{ tutorial.get_category_display }}</span>
+          <span><i class="bi bi-play-circle"></i> {{ tutorial.get_type_display }}</span>
+          <span><i class="bi bi-clock"></i> {{ tutorial.get_duration_display }} {% if tutorial.type == 'text' %}read{% endif %}</span>
+          <span><i class="bi bi-eye"></i> {{ tutorial.views }} views</span>
+          <span><i class="bi bi-calendar"></i> {{ tutorial.created_at|date:"M d, Y" }}</span>
+        </div>
+        <span class="tutorial-label {{ tutorial.level }}">{{ tutorial.get_level_display }}</span>
+      </div>
+      <div class="tutorial-content">
+        {% if tutorial.type == 'video' and tutorial.video_url %}
+          <div class="video-container">
+            <iframe src="{{ tutorial.video_url }}" frameborder="0" allowfullscreen></iframe>
+          </div>
+        {% else %}
+          <div class="text-content">
+            {{ tutorial.content|safe }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="sidebar">
+      <h3>Related Tutorials</h3>
+      <div class="related-tutorials">
+        {% for related in related_tutorials %}
+          <div class="related-card">
+            {% if related.thumbnail %}
+              <img src="{{ related.thumbnail.url }}" alt="{{ related.title }}">
+            {% else %}
+              <img src="https://via.placeholder.com/200x80" alt="No Image">
+            {% endif %}
+            <h4>{{ related.title }}</h4>
+            <a href="{% url 'codebay_app:tutorial_detail' related.id %}">View Tutorial</a>
+          </div>
+        {% empty %}
+          <p>No related tutorials found.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  
+{% endblock %}

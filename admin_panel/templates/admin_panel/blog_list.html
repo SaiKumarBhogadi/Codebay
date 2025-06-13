@@ -1,0 +1,413 @@
+{% extends "admin_panel/base.html" %}
+{% block title %}Blog Posts Management{% endblock %}
+{% block header_title %}Blog Posts Management{% endblock %}
+{% block content %}
+  <style>
+    .stats-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background-color: #FFFFFF;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-left: 5px solid #3498DB;
+      animation: fadeIn 1s ease-in;
+    }
+    .stat-card h4 {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #2C3E50;
+      margin-bottom: 0.5rem;
+    }
+    .stat-card p {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #3498DB;
+      margin: 0;
+    }
+    .search-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .search-section .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .search-section .search-row {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .search-section input {
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      border: 1px solid #E0E4E8;
+      border-radius: 6px;
+      width: 300px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    .search-section input:focus {
+      border-color: #3498DB;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    .search-section select {
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      border: 1px solid #E0E4E8;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    .search-section button,
+    .header-row button {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.95rem;
+      background-color: #FFFFFF;
+      color: #2C3E50;
+      border: 1px solid #E0E4E8;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .header-row button {
+      background-color: #3498DB;
+      color: #FFFFFF;
+      border: none;
+    }
+    .search-section button:hover,
+    .header-row button:hover {
+      background-color: #F39C12;
+      color: #FFFFFF;
+    }
+    .blog-section {
+      overflow-x: auto;
+    }
+    .blog-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+      background-color: #FFFFFF;
+    }
+    .blog-table th,
+    .blog-table td {
+      padding: 0.75rem;
+      text-align: left;
+      font-size: 0.9rem;
+      color: #2C3E50;
+    }
+    .blog-table th {
+      background-color: #F5F7FA;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .blog-table td {
+      border-bottom: 1px solid #E0E4E8;
+    }
+    .blog-table tr:last-child td {
+      border-bottom: none;
+    }
+    .blog-table .status {
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+    }
+    .blog-table .status.active {
+      background-color: rgba(52, 152, 219, 0.1);
+      color: #3498DB;
+    }
+    .blog-table .status.inactive {
+      background-color: rgba(243, 156, 18, 0.1);
+      color: #F39C12;
+    }
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .action-btn {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      white-space: nowrap;
+    }
+    .action-btn.edit {
+      background-color: #3498DB;
+      color: #FFFFFF;
+    }
+    .action-btn.delete {
+      background-color: #F39C12;
+      color: #FFFFFF;
+    }
+    .action-btn.toggle {
+      background-color: #95A5A6;
+      color: #FFFFFF;
+    }
+    .action-btn.edit:hover {
+      background-color: #F39C12;
+    }
+    .action-btn.delete:hover {
+      background-color: #E67E22;
+    }
+    .action-btn.toggle:hover {
+      background-color: #7F8C8D;
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
+    .pagination a {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      color: #2C3E50;
+      border: 1px solid #E0E4E8;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .pagination a.active {
+      background-color: #3498DB;
+      color: #FFFFFF;
+      border-color: #3498DB;
+    }
+    .pagination a:hover {
+      background-color: #F39C12;
+      color: #FFFFFF;
+      border-color: #F39C12;
+    }
+    .error-message {
+      color: #E74C3C;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    /* Medium Screens (Tablets, 768px and below) */
+    @media (max-width: 768px) {
+      .stats-section {
+        grid-template-columns: 1fr;
+      }
+      .stat-card h4 {
+        font-size: 1rem;
+      }
+      .stat-card p {
+        font-size: 1.1rem;
+      }
+      .search-section .header-row {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+      .search-section .search-row {
+        flex-direction: column;
+        width: 100%;
+      }
+      .search-section input,
+      .search-section select {
+        width: 100%;
+      }
+      .search-section button,
+      .header-row button {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+      .blog-table th,
+      .blog-table td {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+      }
+      .action-buttons {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .action-btn {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Small Screens (Mobile, 576px and below) */
+    @media (max-width: 576px) {
+      .stats-section {
+        grid-template-columns: 1fr;
+      }
+      .stat-card h4 {
+        font-size: 0.9rem;
+      }
+      .stat-card p {
+        font-size: 1rem;
+      }
+      .search-section input,
+      .search-section select {
+        width: 100%;
+      }
+      .blog-table th,
+      .blog-table td {
+        font-size: 0.75rem;
+        padding: 0.4rem;
+      }
+      .action-buttons {
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+      .action-btn {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+      }
+      .pagination a {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+      }
+    }
+
+    /* Large Screens (Desktops, 1200px and above) */
+    @media (min-width: 1200px) {
+      .stats-section {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .stat-card h4 {
+        font-size: 1.2rem;
+      }
+      .stat-card p {
+        font-size: 1.5rem;
+      }
+      .search-section input {
+        width: 400px;
+      }
+      .search-section select {
+        width: 200px;
+      }
+      .blog-table th,
+      .blog-table td {
+        font-size: 1rem;
+        padding: 1rem;
+      }
+      .action-buttons {
+        gap: 0.75rem;
+      }
+      .action-btn {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+      }
+    }
+  </style>
+
+  {% if messages %}
+    {% for message in messages %}
+      <p class="error-message {{ message.tags }}">{{ message }}</p>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Stats Section -->
+  <div class="section stats-section">
+    <div class="stat-card">
+      <h4>Total Blogs</h4>
+      <p>{{ total_blogs|default:0 }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Active Blogs</h4>
+      <p>{{ active_blogs|default:0 }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Inactive Blogs</h4>
+      <p>{{ inactive_blogs|default:0 }}</p>
+    </div>
+  </div>
+
+  <!-- Search and Add Blog Section -->
+  <div class="section search-section">
+    <div class="header-row">
+      <h3>Blog Posts</h3>
+      <a href="{% url 'admin_panel:admin_blog_add' %}"><button>Add New Blog Post</button></a>
+    </div>
+    <form method="GET" class="search-row">
+      <input type="text" name="search" placeholder="Search blogs..." value="{{ search_query|default:'' }}">
+      <select name="category">
+        <option value="">All Categories</option>
+        {% for category in categories %}
+          <option value="{{ category.0 }}" {% if category_filter == category.0 %}selected{% endif %}>{{ category.1 }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit"><i class="bi bi-funnel"></i> Filter</button>
+    </form>
+  </div>
+
+  <!-- Blog Posts Table Section -->
+  <div class="section blog-section">
+    <table class="blog-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Category</th>
+          <th>Status</th>
+          <th>Created At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for blog in blog_posts %}
+          <tr>
+            <td>{{ blog.title }}</td>
+            <td>{{ blog.author.full_name|default:blog.author.email }}</td>
+            <td>{{ blog.get_category_display }}</td>
+            <td><span class="status {{ blog.status }}">{{ blog.status|capfirst }}</span></td>
+            <td>{{ blog.created_at|date:"F d, Y" }}</td>
+            <td>
+              <div class="action-buttons">
+                <a href="{% url 'admin_panel:admin_blog_edit' blog_id=blog.id %}" class="action-btn edit">Edit</a>
+                <form action="{% url 'admin_panel:admin_blog_toggle_status' blog_id=blog.id %}" method="POST" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="action-btn toggle">
+                    {% if blog.status == 'active' %}Deactivate{% else %}Activate{% endif %}
+                  </button>
+                </form>
+                <form action="{% url 'admin_panel:admin_blog_delete' blog_id=blog.id %}" method="POST" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="action-btn delete" onclick="return confirm('Are you sure you want to delete {{ blog.title }}?')">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6">No blog posts found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    {% if blog_posts.has_other_pages %}
+      <div class="pagination">
+        {% if blog_posts.has_previous %}
+          <a href="?page={{ blog_posts.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">Previous</a>
+        {% endif %}
+        {% for num in blog_posts.paginator.page_range %}
+          <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}" {% if blog_posts.number == num %}class="active"{% endif %}>{{ num }}</a>
+        {% endfor %}
+        {% if blog_posts.has_next %}
+          <a href="?page={{ blog_posts.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">Next</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

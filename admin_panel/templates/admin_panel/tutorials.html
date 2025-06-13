@@ -1,0 +1,668 @@
+{% extends "admin_panel/base.html" %}
+{% block title %}Tutorials Management{% endblock %}
+{% block header_title %}Tutorials Management{% endblock %}
+{% block content %}
+  <style>
+    /* Stats Section */
+    .stats-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background-color: #FFFFFF;
+      padding: 1.25rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-left: 5px solid #3498DB;
+      animation: fadeIn 1s ease-in;
+      text-align: left;
+    }
+
+    .stat-card h4 {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #2C3E50;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-card p {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #3498DB;
+      margin: 0;
+    }
+
+    /* Search Section */
+    .search-section {
+      background-color: #FFFFFF;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+
+    .search-section .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .search-section .search-row {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-section input,
+    .search-section select {
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      border: 1px solid #E0E4E8;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.3s ease;
+      flex-grow: 1;
+      max-width: 300px;
+    }
+
+    .search-section input:focus,
+    .search-section select:focus {
+      border-color: #3498DB;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+
+    .search-section button,
+    .header-row button {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.95rem;
+      background-color: #3498DB;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .search-section button:hover,
+    .header-row button:hover {
+      background-color: #F39C12;
+      color: #FFFFFF;
+    }
+
+    /* Tutorials Table Section */
+    .tutorials-section {
+      background-color: #FFFFFF;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      overflow-x: auto;
+      max-height: 500px;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .tutorials-section table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px; /* Adjusted for better mobile fit */
+      table-layout: auto;
+    }
+
+    .tutorials-section th,
+    .tutorials-section td {
+      padding: 0.75rem;
+      text-align: left;
+      font-size: 0.9rem;
+      color: #2C3E50;
+      white-space: nowrap;
+    }
+
+    .tutorials-section th {
+      background-color: #F5F7FA;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .tutorials-section td {
+      border-bottom: 1px solid #E0E4E8;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 150px;
+    }
+
+    .tutorials-section tr:last-child td {
+      border-bottom: none;
+    }
+
+    .tutorials-section .tutorial-image {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .tutorials-section .status,
+    .tutorials-section .type,
+    .tutorials-section .level {
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      display: inline-block;
+    }
+
+    .tutorials-section .status.active {
+      background-color: rgba(52, 152, 219, 0.1);
+      color: #3498DB;
+    }
+
+    .tutorials-section .status.inactive {
+      background-color: rgba(243, 156, 18, 0.1);
+      color: #F39C12;
+    }
+
+    .tutorials-section .status.draft {
+      background-color: rgba(149, 165, 166, 0.1);
+      color: #95A5A6;
+    }
+
+    .tutorials-section .type.video {
+      background-color: rgba(52, 152, 219, 0.1);
+      color: #3498DB;
+    }
+
+    .tutorials-section .type.text {
+      background-color: rgba(46, 204, 113, 0.1);
+      color: #2ECC71;
+    }
+
+    .tutorials-section .level.beginner {
+      background-color: rgba(46, 204, 113, 0.1);
+      color: #2ECC71;
+    }
+
+    .tutorials-section .level.intermediate {
+      background-color: rgba(243, 156, 18, 0.1);
+      color: #F39C12;
+    }
+
+    .tutorials-section .level.advanced {
+      background-color: rgba(231, 76, 60, 0.1);
+      color: #E74C3C;
+    }
+
+    .tutorials-section .content-link {
+      color: #3498DB;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .tutorials-section .content-link:hover {
+      color: #F39C12;
+    }
+
+    .tutorials-section .action-buttons {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap; /* Prevent wrapping to keep buttons in a single row */
+      gap: 0.5rem;
+      align-items: center;
+      justify-content: flex-start;
+      min-width: 150px; /* Ensure enough space for buttons */
+    }
+
+    .tutorials-section .action-btn {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.9rem;
+      border: none; 
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      white-space: nowrap;
+      flex: 1; /* Allow buttons to take equal space */
+      text-align: center;
+    }
+
+    .tutorials-section .action-btn.edit {
+      background-color: #3498DB;
+      color: #FFFFFF;
+    }
+
+    .tutorials-section .action-btn.delete {
+      background-color: #F39C12;
+      color: #FFFFFF;
+    }
+
+    .tutorials-section .action-btn.toggle {
+      background-color: #95A5A6;
+      color: #FFFFFF;
+    }
+
+    .tutorials-section .action-btn.edit:hover {
+      background-color: #F39C12;
+    }
+
+    .tutorials-section .action-btn.delete:hover {
+      background-color: #E67E22;
+    }
+
+    .tutorials-section .action-btn.toggle:hover {
+      background-color: #7F8C8D;
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .pagination a {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      color: #2C3E50;
+      border: 1px solid #E0E4E8;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .pagination a.active {
+      background-color: #3498DB;
+      color: #FFFFFF;
+      border-color: #3498DB;
+    }
+
+    .pagination a:hover {
+      background-color: #F39C12;
+      color: #FFFFFF;
+      border-color: #F39C12;
+    }
+
+    /* Error Message */
+    .error-message {
+      color: #E74C3C;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 1024px) {
+      .stats-section {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+
+      .search-section .header-row {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      .search-section .search-row {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+
+      .search-section input,
+      .search-section select {
+        max-width: 250px;
+      }
+
+      .tutorials-section .action-buttons {
+        min-width: 120px;
+        gap: 0.4rem;
+      }
+
+      .tutorials-section .action-btn {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .stats-section {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+      }
+
+      .stat-card {
+        padding: 1rem;
+      }
+
+      .stat-card h4 {
+        font-size: 1rem;
+      }
+
+      .stat-card p {
+        font-size: 1.1rem;
+      }
+
+      .search-section {
+        padding: 1rem;
+      }
+
+      .search-section .header-row {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+      }
+
+      .search-section .search-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-section input,
+      .search-section select {
+        max-width: 100%;
+      }
+
+      .search-section button,
+      .header-row button {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+
+      .tutorials-section {
+        padding: 1rem;
+        max-height: 400px;
+      }
+
+      .tutorials-section th,
+      .tutorials-section td {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+      }
+
+      /* Hide less critical columns to prioritize Actions */
+      .tutorials-section th:nth-child(5), /* Category */
+      .tutorials-section td:nth-child(5),
+      .tutorials-section th:nth-child(7), /* Level */
+      .tutorials-section td:nth-child(7),
+      .tutorials-section th:nth-child(8), /* Duration */
+      .tutorials-section td:nth-child(8) {
+        display: none;
+      }
+
+      .tutorials-section .action-buttons {
+        flex-direction: column;
+        gap: 0.3rem;
+        min-width: 100px;
+        flex-wrap: nowrap;
+      }
+
+      .tutorials-section .action-btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+        flex: 1;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .stats-section {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+
+      .stat-card {
+        padding: 0.75rem;
+      }
+
+      .stat-card h4 {
+        font-size: 0.9rem;
+      }
+
+      .stat-card p {
+        font-size: 1rem;
+      }
+
+      .search-section {
+        padding: 0.75rem;
+      }
+
+      .search-section .header-row {
+        gap: 0.75rem;
+      }
+
+      .search-section input,
+      .search-section select {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+      }
+
+      .search-section button,
+      .header-row button {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+      }
+
+      .tutorials-section {
+        padding: 0.75rem;
+        max-height: 350px;
+      }
+
+      .tutorials-section table {
+        min-width: 400px; /* Further reduced for small screens */
+      }
+
+      .tutorials-section th,
+      .tutorials-section td {
+        font-size: 0.75rem;
+        padding: 0.4rem;
+      }
+
+      .tutorials-section .tutorial-image {
+        width: 40px;
+        height: 40px;
+      }
+
+      .tutorials-section .action-buttons {
+        flex-direction: column; /* Keep horizontal for visibility */
+        gap: 0.2rem;
+        min-width: 90px;
+        flex-wrap: nowrap;
+      }
+
+      .tutorials-section .action-btn {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.7rem;
+        flex: 1;
+      }
+
+      .pagination a {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .stats-section {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 2rem;
+      }
+
+      .stat-card {
+        padding: 1.5rem;
+      }
+
+      .stat-card h4 {
+        font-size: 1.2rem;
+      }
+
+      .stat-card p {
+        font-size: 1.5rem;
+      }
+
+      .search-section input {
+        max-width: 400px;
+      }
+
+      .search-section select {
+        max-width: 200px;
+      }
+
+      .tutorials-section th,
+      .tutorials-section td {
+        font-size: 1rem;
+        padding: 1rem;
+      }
+
+      .tutorials-section .action-buttons {
+        gap: 0.75rem;
+        min-width: 180px;
+      }
+
+      .tutorials-section .action-btn {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+      }
+    }
+  </style>
+
+  {% if messages %}
+    {% for message in messages %}
+      <p class="error-message {{ message.tags }}">{{ message }}</p>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Stats Section -->
+  <div class="section stats-section">
+    <div class="stat-card">
+      <h4>Total Tutorials</h4>
+      <p>{{ total_tutorials }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Active Tutorials</h4>
+      <p>{{ active_tutorials }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Tutorials in Draft</h4>
+      <p>{{ draft_tutorials }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Video Tutorials</h4>
+      <p>{{ video_tutorials }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Text Tutorials</h4>
+      <p>{{ text_tutorials }}</p>
+    </div>
+  </div>
+
+  <!-- Search and Add Tutorial Section -->
+  <div class="section search-section">
+    <div class="header-row">
+      <h3>Tutorials List</h3>
+      <a href="{% url 'admin_panel:tutorials_add' %}"><button aria-label="Add Tutorial">Add Tutorial</button></a>
+    </div>
+    <form method="GET" class="search-row">
+      <input type="text" name="search" placeholder="Search tutorials..." value="{{ search_query|default:'' }}" aria-label="Search tutorials">
+      <select name="category" aria-label="Filter by category">
+        <option value="">All Categories</option>
+        <option value="web-development" {% if category_filter == 'web-development' %}selected{% endif %}>Web Development</option>
+        <option value="programming" {% if category_filter == 'programming' %}selected{% endif %}>Programming</option>
+        <option value="design" {% if category_filter == 'design' %}selected{% endif %}>Design</option>
+      </select>
+      <select name="type" aria-label="Filter by type">
+        <option value="">All Types</option>
+        <option value="video" {% if type_filter == 'video' %}selected{% endif %}>Video</option>
+        <option value="text" {% if type_filter == 'text' %}selected{% endif %}>Text</option>
+      </select>
+      <select name="level" aria-label="Filter by level">
+        <option value="">All Levels</option>
+        <option value="beginner" {% if level_filter == 'beginner' %}selected{% endif %}>Beginner</option>
+        <option value="intermediate" {% if level_filter == 'intermediate' %}selected{% endif %}>Intermediate</option>
+        <option value="advanced" {% if level_filter == 'advanced' %}selected{% endif %}>Advanced</option>
+      </select>
+      <button type="submit" aria-label="Apply filters"><i class="bi bi-funnel"></i> Filter</button>
+    </form>
+  </div>
+
+  <!-- Tutorials Table Section -->
+  <div class="section tutorials-section">
+    <table>
+      <thead>
+        <tr>
+          <th><input type="checkbox" aria-label="Select all tutorials"></th>
+          <th>Thumbnail</th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Type</th>
+          <!-- <th>Level</th> -->
+          <th>Duration</th>
+          <th>Status</th>
+          <th>Added On</th>
+          <th>Actions</th> <!-- Moved Actions to match tbody order -->
+        </tr>
+      </thead>
+      <tbody>
+        {% for tutorial in tutorials %}
+          <tr>
+            <td><input type="checkbox" aria-label="Select tutorial"></td>
+            <td>
+              {% if tutorial.thumbnail %}
+                <img src="{{ tutorial.thumbnail.url }}" class="tutorial-image" alt="{{ tutorial.title }}">
+              {% else %}
+                <img src="https://via.placeholder.com/50" class="tutorial-image" alt="No Image">
+              {% endif %}
+            </td>
+            <td>{{ tutorial.title }}</td>
+            <td>{{ tutorial.get_category_display }}</td>
+            <td><span class="type {{ tutorial.type }}">{{ tutorial.get_type_display }}</span></td>
+            <!-- <td><span class="level {{ tutorial.level }}">{{ tutorial.get_level_display }}</span></td> -->
+            <td>{{ tutorial.get_duration_display }}</td>
+            <td><span class="status {{ tutorial.status }}">{{ tutorial.get_status_display }}</span></td>
+            <td>{{ tutorial.created_at|date:"M d, Y" }}</td>
+            <td>
+              <div class="action-buttons">
+                <a href="{% url 'admin_panel:tutorials_edit' tutorial.id %}"><button class="action-btn edit" aria-label="Edit tutorial">Edit</button></a>
+                <form method="POST" action="{% url 'admin_panel:tutorials_toggle' tutorial.id %}" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="action-btn toggle" aria-label="{% if tutorial.status == 'active' %}Deactivate tutorial{% elif tutorial.status == 'draft' %}Publish tutorial{% else %}Activate tutorial{% endif %}">
+                    {% if tutorial.status == 'active' %}Deactivate{% elif tutorial.status == 'draft' %}Publish{% else %}Activate{% endif %}
+                  </button>
+                </form>
+                <form method="POST" action="{% url 'admin_panel:tutorials_delete' tutorial.id %}" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="action-btn delete" onclick="return confirm('Are you sure you want to delete {{ tutorial.title }}?');" aria-label="Delete tutorial">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="10">No tutorials found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    {% if tutorials.has_other_pages %}
+      <div class="pagination">
+        {% if tutorials.has_previous %}
+          <a href="?page={{ tutorials.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}{% if level_filter %}&level={{ level_filter }}{% endif %}" aria-label="Previous page">Previous</a>
+        {% endif %}
+        {% for num in tutorials.paginator.page_range %}
+          <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}{% if level_filter %}&level={{ level_filter }}{% endif %}" {% if tutorials.number == num %}class="active"{% endif %} aria-label="Page {{ num }}">{{ num }}</a>
+        {% endfor %}
+        {% if tutorials.has_next %}
+          <a href="?page={{ tutorials.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}{% if level_filter %}&level={{ level_filter }}{% endif %}" aria-label="Next page">Next</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

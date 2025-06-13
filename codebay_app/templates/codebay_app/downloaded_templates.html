@@ -1,0 +1,339 @@
+{% extends "codebay_app/base.html" %}
+{% block content %}
+  <style>
+    /* Downloaded Templates Container */
+    .templates-container {
+      padding: 3rem 1.5rem;
+      background-color: #F5F7FA;
+      min-height: calc(100vh - 200px); /* Adjust for navbar and footer */
+    }
+
+    .templates-title {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #2C3E50;
+      text-align: center;
+      margin-bottom: 2rem;
+      animation: fadeIn 1s ease-in;
+    }
+
+    /* Templates Section (Cards) */
+    .templates-section-cards {
+      max-width: 1200px;
+      margin: 0 auto 3rem auto;
+    }
+
+    .templates-subtitle {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #2C3E50;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .templates-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      justify-items: center; /* Center the cards if fewer than 3 */
+    }
+
+    .template-card {
+      width: 100%;
+      max-width: 400px; /* Match the approximate width of a card in a 3-card layout (1200px ÷ 3) */
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      animation: fadeIn 1s ease-in;
+      transition: transform 0.3s ease;
+    }
+
+    .template-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .template-card-image {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .template-card-content {
+      padding: 1.25rem;
+    }
+
+    .template-card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #2C3E50;
+      margin-bottom: 0.5rem;
+    }
+
+    .template-card-meta {
+      font-size: 0.9rem;
+      color: #95A5A6;
+      margin-bottom: 0.25rem;
+    }
+
+    .template-card-action {
+      margin-top: 1rem;
+    }
+
+    .template-card-action a {
+      display: block;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      background-color: #3498DB;
+      color: #FFFFFF;
+      text-align: center;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .template-card-action a:hover {
+      background-color: #F39C12;
+    }
+
+    /* Templates Section (Table) */
+    .templates-section-table {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .templates-card-table {
+      background-color: #FFFFFF;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 1s ease-in;
+      overflow-x: auto; /* Enable horizontal scroll for table */
+    }
+
+    .templates-card-table h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #2C3E50;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Templates Table */
+    .templates-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px; /* Ensure table is wide enough */
+    }
+
+    .templates-table th,
+    .templates-table td {
+      padding: 0.75rem;
+      text-align: left;
+      font-size: 0.9rem;
+      color: #2C3E50;
+      border-bottom: 1px solid #E0E4E8;
+    }
+
+    .templates-table th {
+      background-color: #F5F7FA;
+      font-weight: 600;
+    }
+
+    .templates-table .download-link {
+      color: #3498DB;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .templates-table .download-link:hover {
+      color: #F39C12;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .templates-container {
+        padding: 2rem 1rem;
+      }
+
+      .templates-title {
+        font-size: 1.75rem;
+      }
+
+      .templates-subtitle {
+        font-size: 1.25rem;
+      }
+
+      .templates-cards {
+        grid-template-columns: 1fr; /* Single column on smaller screens */
+        gap: 1rem;
+      }
+
+      .template-card {
+        max-width: 100%; /* Allow the card to take full width on smaller screens */
+      }
+
+      .template-card-image {
+        height: 120px;
+      }
+
+      .template-card-content {
+        padding: 1rem;
+      }
+
+      .template-card-title {
+        font-size: 1rem;
+      }
+
+      .template-card-meta {
+        font-size: 0.85rem;
+      }
+
+      .template-card-action a {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+      }
+
+      .templates-card-table {
+        padding: 1.5rem;
+      }
+
+      .templates-card-table h3 {
+        font-size: 1.25rem;
+      }
+
+      .templates-table th,
+      .templates-table td {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+      }
+
+      /* Hide less critical columns on smaller screens */
+      .templates-table th:nth-child(3), /* Downloaded On */
+      .templates-table td:nth-child(3) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .templates-container {
+        padding: 1.5rem 0.75rem;
+      }
+
+      .templates-title {
+        font-size: 1.5rem;
+      }
+
+      .templates-subtitle {
+        font-size: 1.1rem;
+      }
+
+      .templates-cards {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+
+      .template-card {
+        max-width: 100%;
+      }
+
+      .template-card-image {
+        height: 100px;
+      }
+
+      .template-card-title {
+        font-size: 0.95rem;
+      }
+
+      .template-card-meta {
+        font-size: 0.8rem;
+      }
+
+      .template-card-action a {
+        font-size: 0.8rem;
+      }
+
+      .templates-card-table {
+        padding: 1rem;
+      }
+
+      .templates-card-table h3 {
+        font-size: 1.1rem;
+      }
+
+      .templates-table th,
+      .templates-table td {
+        font-size: 0.8rem;
+        padding: 0.4rem;
+      }
+    }
+  </style>
+
+  <div class="templates-container">
+    <h2 class="templates-title">Downloaded Templates</h2>
+
+    <!-- Templates Section (Cards) -->
+    <div class="templates-section-cards">
+      <h3 class="templates-subtitle">Your Downloads (Card View)</h3>
+      {% if user_downloads %}
+        <div class="templates-cards">
+          {% for download in user_downloads %}
+            <div class="template-card">
+              {% with template=download.template %}
+                {% if template.images.first %}
+                  <img src="{{ template.images.first.image.url }}" alt="{{ template.name }}" class="template-card-image">
+                {% else %}
+                  <img src="https://via.placeholder.com/280x150?text={{ template.name|urlencode }}" alt="{{ template.name }}" class="template-card-image">
+                {% endif %}
+                <div class="template-card-content">
+                  <h4 class="template-card-title">{{ template.name }}</h4>
+                  <p class="template-card-meta">Category: {{ template.get_category_display }}</p>
+                  <p class="template-card-meta">Downloaded On: {{ download.date|date:"M d, Y" }}</p>
+                  <div class="template-card-action">
+                    <a href="{% url 'codebay_app:template_instructions_page' template_id=template.id %}">Download Again</a>
+                  </div>
+                </div>
+              {% endwith %}
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p style="text-align: center; color: #95A5A6;">You haven't downloaded any templates yet.</p>
+      {% endif %}
+    </div>
+
+    <!-- Templates Section (Table) -->
+    <div class="templates-section-table">
+      <div class="templates-card-table">
+        <h3>Your Downloads (Table View)</h3>
+        {% if user_downloads %}
+          <table class="templates-table">
+            <thead>
+              <tr>
+                <th>Template Name</th>
+                <th>Category</th>
+                <th>Downloaded On</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for download in user_downloads %}
+                {% with template=download.template %}
+                  <tr>
+                    <td>{{ template.name }}</td>
+                    <td>{{ template.get_category_display }}</td>
+                    <td>{{ download.date|date:"M d, Y" }}</td>
+                    <td>
+                      <a href="{% url 'codebay_app:template_instructions_page' template_id=template.id %}" class="download-link">Download Again</a>
+                    </td>
+                  </tr>
+                {% endwith %}
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p style="text-align: center; color: #95A5A6;">You haven't downloaded any templates yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

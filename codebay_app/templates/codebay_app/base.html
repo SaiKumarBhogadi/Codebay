@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeBay</title>
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <link rel="stylesheet" href="{% static 'jsscripts.js' %}">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Poppins Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container navbar-container">
+      <!-- Logo -->
+      <a class="navbar-brand" href="{% url 'codebay_app:home' %}">CodeBay</a>
+      
+      <!-- Toggler for Mobile -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <!-- Navbar Links -->
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'codebay_app:home' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'codebay_app:templates_list' %}">Categories</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'codebay_app:blog' %}">Blog</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'codebay_app:tutorials' %}">Tutorials</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'codebay_app:contact' %}">Contact</a>
+          </li>
+        </ul>
+        <!-- Search and User Actions -->
+        <div class="d-flex align-items-center">
+          <!-- Desktop Search -->
+          <form class="search-form search-desktop me-3">
+            <input type="text" class="search-input" placeholder="Search products..." required>
+            <i class="search-icon bi bi-search"></i>
+          </form>
+          <!-- Mobile Search (Hidden by Default) -->
+          <div class="search-mobile collapse" id="mobileSearch">
+            <form class="search-form">
+              <input type="text" class="search-input" placeholder="Search products..." required>
+            </form>
+          </div>
+          <!-- User Actions -->
+          {% if user.is_authenticated %}
+            <!-- Show Dashboard and Logout buttons when user is logged in -->
+            <a href="{% url 'codebay_app:user_dashboard' %}" class="btn btn-outline-primary me-2">Dashboard</a>
+            <a href="{% url 'codebay_app:logout' %}" class="btn btn-outline-secondary me-2">Logout</a>
+          {% else %}
+            <!-- Show Login button when user is not logged in -->
+            <a href="{% url 'codebay_app:login' %}" class="btn btn-outline-secondary me-2">Login</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  {% block content %}
+  {% endblock %}
+
+  <!-- Call-to-Action Footer Section -->
+  <section class="cta-footer-section">
+    <div class="cta-footer-container">
+      <div class="cta-footer-content">
+        <h2 class="cta-footer-title">Ready to Build Your Site?</h2>
+        <a href="#contact-us" class="cta-footer-cta">
+          Contact Us <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+      <div class="cta-footer-links">
+        <h3 class="cta-footer-links-title">Explore Templates</h3>
+        <ul class="cta-footer-links-list">
+          <li><a href="#portfolio-products" class="cta-footer-link">Portfolio</a></li>
+          <li><a href="#ecommerce-products" class="cta-footer-link">E-commerce</a></li>
+          <li><a href="#business-products" class="cta-footer-link">Business</a></li>
+          <li><a href="#popular-products" class="cta-footer-link">Popular</a></li>
+          <li><a href="#landing-products" class="cta-footer-link">Landing</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bootstrap JS and Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Bootstrap Icons (for search icon) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+</body>
+</html>

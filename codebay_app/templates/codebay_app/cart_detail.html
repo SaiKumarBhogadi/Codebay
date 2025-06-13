@@ -1,0 +1,235 @@
+{% extends 'codebay_app/base.html' %}
+{% block content %}
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #F5F7FA;
+    color: #2C3E50;
+    margin: 0;
+    padding: 0;
+  }
+  .cart-section {
+    padding: 3rem 0;
+  }
+  .cart-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  .cart-title {
+    font-weight: 600;
+    font-size: 2.5rem;
+    color: #2C3E50;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .cart-table th, .cart-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e4e8;
+  }
+  .cart-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #2C3E50;
+  }
+  .cart-table td {
+    color: #495057;
+  }
+  .cart-item-image {
+    width: 100px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  .quantity-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .quantity-input {
+    width: 60px;
+    padding: 0.25rem;
+    border: 1px solid #e0e4e8;
+    border-radius: 4px;
+    text-align: center;
+  }
+  .action-btn {
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    color: white;
+  }
+  .update-btn {
+    background-color: #3498db;
+  }
+  .update-btn:hover {
+    background-color: #2980b9;
+  }
+  .remove-btn {
+    background-color: #dc3545;
+  }
+  .remove-btn:hover {
+    background-color: #c82333;
+  }
+  .cart-summary {
+    max-width: 400px;
+    margin: 2rem auto;
+    background-color: #FFFFFF;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  .cart-summary h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2C3E50;
+    margin-bottom: 1rem;
+  }
+  .cart-summary p {
+    font-size: 1rem;
+    color: #495057;
+    margin-bottom: 1rem;
+  }
+  .checkout-btn {
+    display: block;
+    text-align: center;
+    padding: 0.75rem;
+    background-color: #3498db;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+  .checkout-btn:hover {
+    background-color: #f39c12;
+  }
+  .empty-cart {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #6c757d;
+  }
+  @media (max-width: 768px) {
+    .cart-table {
+      font-size: 0.9rem;
+    }
+    .cart-table th, .cart-table td {
+      padding: 0.75rem;
+    }
+    .cart-item-image {
+      width: 80px;
+      height: 48px;
+    }
+    .quantity-input {
+      width: 50px;
+    }
+    .action-btn {
+      padding: 0.3rem 0.6rem;
+      font-size: 0.85rem;
+    }
+  }
+  @media (max-width: 576px) {
+    .cart-table {
+      font-size: 0.85rem;
+    }
+    .cart-table th, .cart-table td {
+      padding: 0.5rem;
+    }
+    .cart-item-image {
+      width: 60px;
+      height: 36px;
+    }
+    .cart-table thead {
+      display: none;
+    }
+    .cart-table tr {
+      display: block;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #e0e4e8;
+    }
+    .cart-table td {
+      display: flex;
+      justify-content: space-between;
+      border: none;
+      padding: 0.5rem 1rem;
+    }
+    .cart-table td:before {
+      content: attr(data-label);
+      font-weight: 600;
+      color: #2C3E50;
+    }
+  }
+</style>
+
+<section class="cart-section">
+  <div class="cart-container">
+    <h2 class="cart-title">Your Cart</h2>
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+    {% if cart.items.exists %}
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th>Template</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in cart.items.all %}
+            <tr>
+              <td data-label="Template">
+                {% if item.template.images.first %}
+                  <img src="{{ item.template.images.first.image.url }}" alt="{{ item.template.name }}" class="cart-item-image">
+                {% else %}
+                  <img src="https://via.placeholder.com/100x60?text=No+Image" alt="{{ item.template.name }}" class="cart-item-image">
+                {% endif %}
+                {{ item.template.name }}
+              </td>
+              <td data-label="Price">Rs &nbsp;{{ item.template.price }}</td>
+              <td data-label="Quantity">
+                <form action="{% url 'codebay_app:cart_update_quantity' item_id=item.id %}" method="POST" class="quantity-form">
+                  {% csrf_token %}
+                  <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="quantity-input">
+                  <button type="submit" class="action-btn update-btn">Update</button>
+                </form>
+              </td>
+              <td data-label="Subtotal">Rs &nbsp;{{ item.subtotal }}</td>
+              <td data-label="Actions">
+                <form action="{% url 'codebay_app:cart_remove' item_id=item.id %}" method="POST" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="action-btn remove-btn">Remove</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="cart-summary">
+        <h3>Cart Summary</h3>
+        <p>Total: Rs &nbsp;{{ cart.total_price }}</p>
+        <a href="{% url 'codebay_app:checkout' %}" class="checkout-btn">Proceed to Checkout</a>
+      </div>
+    {% else %}
+      <p class="empty-cart">Your cart is empty. <a href="{% url 'codebay_app:templates_list' %}">Browse templates</a> to add items.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

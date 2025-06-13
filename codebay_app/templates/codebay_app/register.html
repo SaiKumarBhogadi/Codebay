@@ -1,0 +1,179 @@
+{% extends 'codebay_app/base.html' %}
+{% block content %}
+  <style>
+    .register {
+      font-family: 'Poppins', sans-serif;
+      background-color: #F5F7FA;
+      color: #2C3E50;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .register-container {
+      max-width: 400px;
+      width: 100%;
+      padding: 0 1rem;
+    }
+
+    .register-form {
+      background-color: #FFFFFF;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 1s ease-in;
+    }
+
+    .register-form h2 {
+      font-weight: 600;
+      font-size: 1.75rem;
+      color: #2C3E50;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: #2C3E50;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      border: 1px solid #E0E4E8;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+      border-color: #3498DB;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+
+    .register-button {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      font-weight: 400;
+      background-color: #3498DB;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+    }
+
+    .register-button:hover {
+      background-color: #F39C12;
+      transform: translateY(-2px);
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: #2C3E50;
+    }
+
+    .login-link a {
+      color: #3498DB;
+      text-decoration: none;
+      font-weight: 400;
+      transition: color 0.3s ease;
+    }
+
+    .login-link a:hover {
+      color: #F39C12;
+    }
+
+    .error-message {
+      color: #E74C3C;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 576px) {
+      .register-container {
+        padding: 0 0.5rem;
+      }
+
+      .register-form {
+        padding: 1.5rem;
+      }
+
+      .register-form h2 {
+        font-size: 1.5rem;
+      }
+
+      .form-group label {
+        font-size: 0.9rem;
+      }
+
+      .form-group input {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+      }
+
+      .register-button {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+      }
+
+      .login-link {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+  <div class="register">
+    <div class="register-container">
+      <div class="register-form">
+        <h2>Create Your Account</h2>
+        {% if messages %}
+          {% for message in messages %}
+            <p class="error-message {{ message.tags }}">{{ message }}</p>
+          {% endfor %}
+        {% endif %}
+        <form method="POST">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="full-name">Full Name *</label>
+            <input type="text" id="full-name" name="full_name" placeholder="John Doe" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" placeholder="john@example.com" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password *</label>
+            <input type="password" id="password" name="password" placeholder="Create a password" required>
+          </div>
+          <div class="form-group">
+            <label for="confirm-password">Confirm Password *</label>
+            <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirm your password" required>
+          </div>
+          <button type="submit" class="register-button">Sign Up</button>
+        </form>
+        <p class="login-link">Already have an account? <a href="{% url 'codebay_app:login' %}">Login</a></p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

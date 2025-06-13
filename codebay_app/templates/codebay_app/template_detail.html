@@ -1,0 +1,1017 @@
+{% extends 'codebay_app/base.html' %}
+{% block content %}
+
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #F5F7FA 0%, #EAF0F6 100%);
+    color: #333333;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Template Detail Page */
+  .template-detail {
+    padding: 4rem 0;
+  }
+
+  .template-detail-container {
+    max-width: 80%;
+    margin: 0 auto;
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+  }
+
+  /* Hero Section */
+  .template-hero {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    animation: fadeIn 1s ease-in;
+    background: linear-gradient(145deg, #F9F9F9, #EDEFF2);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  .template-hero-preview {
+    flex: 2;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    max-height: 400px;
+    position: relative;
+    border: 2px solid #E0E4E8;
+  }
+
+  .template-hero-preview .carousel-item {
+    position: relative;
+  }
+
+  .template-hero-preview .carousel-item img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .template-hero-preview .carousel-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3));
+  }
+
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 5%;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+  }
+
+  .carousel-control-prev:hover,
+  .carousel-control-next:hover {
+    opacity: 1;
+  }
+
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    background-color: #3498DB;
+    border-radius: 50%;
+    padding: 1rem;
+    width: 40px;
+    height: 40px;
+    background-size: 50%;
+  }
+
+  .carousel-control-prev:hover .carousel-control-prev-icon,
+  .carousel-control-next:hover .carousel-control-next-icon {
+    background-color: #F39C12;
+  }
+
+  .template-hero-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .template-hero-title {
+    font-weight: 700;
+    font-size: 2.5rem;
+    color: #2C3E50;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+  }
+
+  .template-hero-category {
+    font-size: 1.1rem;
+    color: #3498DB;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .template-hero-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 1rem;
+    color: #F39C12;
+    margin-bottom: 1rem;
+  }
+
+  .template-hero-rating i {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+  }
+
+  .template-hero-rating i:hover {
+    transform: scale(1.2);
+  }
+
+  .template-hero-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .template-hero-preview-btn,
+  .template-hero-download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .template-hero-preview-btn {
+    background: linear-gradient(90deg, #3498DB, #5DADE2);
+    color: #FFFFFF;
+  }
+
+  .template-hero-preview-btn:hover {
+    background: linear-gradient(90deg, #F39C12, #F7C948);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .template-hero-download-btn {
+    background: linear-gradient(90deg, #F39C12, #F7C948);
+    color: #FFFFFF;
+  }
+
+  .template-hero-download-btn:hover {
+    background: linear-gradient(90deg, #3498DB, #5DADE2);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Overview Section */
+  .template-overview {
+    margin-bottom: 3rem;
+    animation: fadeIn 1s ease-in 0.2s;
+    animation-fill-mode: both;
+    background-color: #F9F9F9;
+    padding: 2rem;
+    border-radius: 12px;
+  }
+
+  .template-overview-title,
+  .template-features-title,
+  .template-tech-title,
+  .template-price-title,
+  .template-screenshots-title,
+  .template-reviews-title,
+  .template-related-title,
+  .template-faq-title {
+    font-weight: 700;
+    font-size: 2rem;
+    color: #2C3E50;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    position: relative;
+    display: inline-block;
+  }
+
+  .template-overview-title::after,
+  .template-features-title::after,
+  .template-tech-title::after,
+  .template-price-title::after,
+  .template-screenshots-title::after,
+  .template-reviews-title::after,
+  .template-related-title::after,
+  .template-faq-title::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #3498DB, #F39C12);
+    border-radius: 2px;
+  }
+
+  .template-overview-description {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #555555;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .template-overview-why {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #555555;
+    background: linear-gradient(145deg, #F0F3F6, #EDEFF2);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Features Section */
+  .template-features {
+    margin-bottom: 3rem;
+    animation: fadeIn 1s ease-in 0.3s;
+    animation-fill-mode: both;
+    background-color: #F9F9F9;
+    padding: 2rem;
+    border-radius: 12px;
+  }
+
+  .template-features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .template-feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: linear-gradient(145deg, #FFFFFF, #F5F7FA);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border-left: 4px solid #3498DB;
+  }
+
+  .template-feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    border-left-color: #F39C12;
+  }
+
+  .template-feature-icon {
+    font-size: 2rem;
+    color: #3498DB;
+    transition: color 0.3s ease;
+  }
+
+  .template-feature-item:hover .template-feature-icon {
+    color: #F39C12;
+  }
+
+  .template-feature-text h4 {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #2C3E50;
+    margin-bottom: 0.5rem;
+  }
+
+  .template-feature-text p {
+    font-size: 0.9rem;
+    color: #555555;
+    line-height: 1.5;
+  }
+
+  /* Tech Stack Section */
+  .template-tech {
+    margin-bottom: 3rem;
+    animation: fadeIn 1s ease-in 0.4s;
+    animation-fill-mode: both;
+    background-color: #F9F9F9;
+    padding: 2rem;
+    border-radius: 12px;
+  }
+
+  .template-tech-list {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .template-tech-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.3s ease;
+    padding: 1rem;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .template-tech-item:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .template-tech-icon {
+    font-size: 2.5rem;
+    color: #3498DB;
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
+  }
+
+  .template-tech-item:hover .template-tech-icon {
+    color: #F39C12;
+  }
+
+  .template-tech-name {
+    font-size: 0.9rem;
+    color: #333333;
+    font-weight: 500;
+  }
+
+  /* Pricing Section */
+  .template-price {
+    text-align: center;
+    margin-bottom: 3rem;
+    animation: fadeIn 1s ease-in 0.5s;
+    animation-fill-mode: both;
+    background-color: #F9F9F9;
+    padding: 2rem;
+    border-radius: 12px;
+  }
+
+  .template-price-amount {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2C3E50;
+    margin-bottom: 1rem;
+    background: linear-gradient(90deg, #3498DB, #F39C12);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .template-price-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    background: linear-gradient(90deg, #F39C12, #F7C948);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .template-price-btn:hover {
+    background: linear-gradient(90deg, #3498DB, #5DADE2);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Screenshots Section */
+  .template-screenshots {
+    margin-bottom: 3rem;
+    animation: fadeIn 1s ease-in 0.6s;
+    animation-fill-mode: both;
+    background-color: #F9F9F9;
+    padding: 2rem;
+    border-radius: 12px;
+  }
+
+  .template-screenshots-grid {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .template-screenshot-item {
+    flex: 1;
+    min-width: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 2px solid #E0E4E8;
+  }
+
+  .template-screenshot-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border-color: #3498DB;
+  }
+
+  .template-screenshot-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .template-screenshot-caption {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #555555;
+    padding: 0.5rem;
+    background-color: #FFFFFF;
+  }
+
+  .no-screenshots-message {
+    text-align: center;
+    font-size: 1rem;
+    color: #555555;
+    font-style: italic;
+  }
+
+  /* User Reviews Section */
+  .template-reviews {
+    margin-bottom: 3rem;
+    animation: fadeIn 1s ease-in 0.7s;
+    animation-fill-mode: both;
+    background-color: #F9F9F9;
+    padding: 2rem;
+    border-radius: 12px;
+  }
+
+  .template-reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .template-review-card {
+    background: linear-gradient(145deg, #F9F9F9, #EDEFF2);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border-left: 4px solid #F39C12;
+  }
+
+  .template-review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    border-left-color: #3498DB;
+  }
+
+  .template-review-rating {
+    display: flex;
+    gap: 0.3rem;
+    font-size: 1rem;
+    color: #F39C12;
+    margin-bottom: 0.5rem;
+  }
+
+  .template-review-rating i {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+  }
+
+  .template-review-rating i:hover {
+    transform: scale(1.2);
+  }
+
+  .template-review-text {
+    font-size: 0.9rem;
+    color: #555555;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  .template-review-author {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2C3E50;
+  }
+
+  /* Related Templates Section */
+  .template-related {
+    margin-bottom: 3rem;
+    animation: fadeIn 1s ease-in 0.8s;
+    animation-fill-mode: both;
+    background-color: #F9F9F9;
+    padding: 2rem;
+    border-radius: 12px;
+  }
+
+  .template-related-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .template-related-card {
+    background: linear-gradient(145deg, #FFFFFF, #F5F7FA);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .template-related-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .template-related-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .template-related-card:hover img {
+    transform: scale(1.05);
+  }
+
+  .template-related-card h4 {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #2C3E50;
+    padding: 1rem;
+    margin: 0;
+    text-align: center;
+  }
+
+  /* FAQ Section */
+  .template-faq {
+    margin-bottom: 3rem;
+    animation: fadeIn 1s ease-in 0.9s;
+    animation-fill-mode: both;
+    background-color: #F9F9F9;
+    padding: 2rem;
+    border-radius: 12px;
+  }
+
+  .template-faq-item {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+
+  .template-faq-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .template-faq-question {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #2C3E50;
+    margin-bottom: 0.5rem;
+  }
+
+  .template-faq-answer {
+    font-size: 0.9rem;
+    color: #555555;
+    line-height: 1.5;
+  }
+
+  /* Fade-in Animation */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 1200px) {
+    .template-detail-container {
+      max-width: 90%;
+    }
+    .template-hero-title {
+      font-size: 2.2rem;
+    }
+    .template-hero-preview {
+      max-height: 350px;
+    }
+    .template-hero-preview .carousel-item img {
+      height: 350px;
+    }
+  }
+
+  @media (max-width: 991px) {
+    .template-hero {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .template-hero-info {
+      align-items: center;
+      text-align: center;
+    }
+    .template-hero-title {
+      font-size: 2rem;
+    }
+    .template-hero-category {
+      font-size: 1rem;
+    }
+    .template-hero-buttons {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .template-hero-preview-btn,
+    .template-hero-download-btn {
+      padding: 0.6rem 1.5rem;
+      font-size: 1rem;
+    }
+    .template-hero-preview {
+      max-height: 300px;
+    }
+    .template-hero-preview .carousel-item img {
+      height: 300px;
+    }
+    .template-features-grid {
+      grid-template-columns: 1fr;
+    }
+    .template-reviews-grid,
+    .template-related-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .template-detail {
+      padding: 2rem 0;
+    }
+    .template-detail-container {
+      max-width: 95%;
+      padding: 1.5rem;
+    }
+    .template-hero {
+      padding: 1.5rem;
+    }
+    .template-hero-title {
+      font-size: 1.75rem;
+    }
+    .template-hero-category {
+      font-size: 0.9rem;
+    }
+    .template-hero-preview {
+      max-height: 250px;
+    }
+    .template-hero-preview .carousel-item img {
+      height: 250px;
+    }
+    .template-overview,
+    .template-features,
+    .template-tech,
+    .template-price,
+    .template-screenshots,
+    .template-reviews,
+    .template-related,
+    .template-faq {
+      padding: 1.5rem;
+    }
+    .template-overview-title,
+    .template-features-title,
+    .template-tech-title,
+    .template-price-title,
+    .template-screenshots-title,
+    .template-reviews-title,
+    .template-related-title,
+    .template-faq-title {
+      font-size: 1.5rem;
+    }
+    .template-overview-description,
+    .template-overview-why {
+      font-size: 0.9rem;
+    }
+    .template-feature-icon {
+      font-size: 1.5rem;
+    }
+    .template-feature-text h4 {
+      font-size: 1rem;
+    }
+    .template-feature-text p {
+      font-size: 0.85rem;
+    }
+    .template-tech-list {
+      gap: 1.5rem;
+    }
+    .template-tech-icon {
+      font-size: 2rem;
+    }
+    .template-tech-name {
+      font-size: 0.85rem;
+    }
+    .template-price-amount {
+      font-size: 1.5rem;
+    }
+    .template-price-btn {
+      padding: 0.6rem 1.5rem;
+      font-size: 1rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .template-detail {
+      padding: 1.5rem 0;
+    }
+    .template-detail-container {
+      max-width: 100%;
+      padding: 1rem;
+    }
+    .template-hero {
+      padding: 1rem;
+    }
+    .template-hero-title {
+      font-size: 1.5rem;
+    }
+    .template-hero-category {
+      font-size: 0.85rem;
+    }
+    .template-hero-preview {
+      max-height: 200px;
+    }
+    .template-hero-preview .carousel-item img {
+      height: 200px;
+    }
+    .template-hero-preview-btn,
+    .template-hero-download-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+    .template-overview,
+    .template-features,
+    .template-tech,
+    .template-price,
+    .template-screenshots,
+    .template-reviews,
+    .template-related,
+    .template-faq {
+      padding: 1rem;
+    }
+    .template-overview-title,
+    .template-features-title,
+    .template-tech-title,
+    .template-price-title,
+    .template-screenshots-title,
+    .template-reviews-title,
+    .template-related-title,
+    .template-faq-title {
+      font-size: 1.3rem;
+    }
+    .template-overview-description,
+    .template-overview-why {
+      font-size: 0.85rem;
+    }
+    .template-feature-icon {
+      font-size: 1.2rem;
+    }
+    .template-feature-text h4 {
+      font-size: 0.9rem;
+    }
+    .template-feature-text p {
+      font-size: 0.8rem;
+    }
+    .template-tech-list {
+      gap: 1rem;
+    }
+    .template-tech-icon {
+      font-size: 1.5rem;
+    }
+    .template-tech-name {
+      font-size: 0.8rem;
+    }
+    .template-price-amount {
+      font-size: 1.2rem;
+    }
+    .template-price-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+    .template-screenshots-grid {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .template-screenshot-item {
+      min-width: 100%;
+    }
+    .template-reviews-grid,
+    .template-related-grid {
+      grid-template-columns: 1fr;
+    }
+    .template-review-text,
+    .template-review-author {
+      font-size: 0.85rem;
+    }
+    .template-related-card h4 {
+      font-size: 1rem;
+    }
+    .template-faq-question {
+      font-size: 1rem;
+    }
+    .template-faq-answer {
+      font-size: 0.85rem;
+    }
+  }
+</style>
+
+<!-- Template Detail Page Content -->
+<main class="template-detail">
+  <div class="template-detail-container">
+    <!-- Hero Section -->
+    <div class="template-hero">
+      <div class="template-hero-preview">
+        {% if template.images.all %}
+          <div id="templateHeroCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              {% for image in template.images.all %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                  <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:template.name }}">
+                </div>
+              {% endfor %}
+            </div>
+            {% if template.images.count > 1 %}
+              <button class="carousel-control-prev" type="button" data-bs-target="#templateHeroCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#templateHeroCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            {% endif %}
+          </div>
+        {% else %}
+          <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80" alt="{{ template.name }} Preview">
+        {% endif %}
+      </div>
+      <div class="template-hero-info">
+        <h1 class="template-hero-title">{{ template.name }}</h1>
+        <span class="template-hero-category">{{ template.get_category_display }}</span>
+        <div class="template-hero-rating">
+          {% with stars=template.get_rating_stars %}
+            {% for _ in stars.full %}
+              <i class="bi bi-star-fill"></i>
+            {% endfor %}
+            {% for _ in stars.half %}
+              <i class="bi bi-star-half"></i>
+            {% endfor %}
+            {% for _ in stars.empty %}
+              <i class="bi bi-star"></i>
+            {% endfor %}
+            <span>({{ template.rating|floatformat:1 }}/5)</span>
+          {% endwith %}
+        </div>
+        <div class="template-hero-buttons">
+          <a href="{% if template.preview_url %}{{ template.preview_url }}{% else %}{% url 'codebay_app:template_action' template.id %}{% endif %}" class="template-hero-preview-btn">
+            Live Preview <i class="bi bi-eye"></i>
+          </a>
+          <a href="{% url 'codebay_app:template_instructions_page' template_id=template.id %}" class="template-hero-download-btn">
+  Download Now <i class="bi bi-download"></i>
+</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overview Section -->
+    <div class="template-overview">
+      <h2 class="template-overview-title">Overview</h2>
+      <p class="template-overview-description">
+        {{ template.description|default:"A professionally designed template." }}
+      </p>
+      <p class="template-overview-why">
+        <strong>Why Choose This Template?</strong> {{ template.why_choose|default:"This template offers a perfect blend of functionality and aesthetics." }}
+      </p>
+    </div>
+
+    <!-- Features Section -->
+    <div class="template-features">
+      <h2 class="template-features-title">Key Features</h2>
+      <div class="template-features-grid">
+        {% for feature in template.features.all %}
+          <div class="template-feature-item">
+            <i class="template-feature-icon {{ feature.icon }}"></i>
+            <div class="template-feature-text">
+              <h4>{{ feature.name }}</h4>
+              <p>{{ feature.description }}</p>
+            </div>
+          </div>
+        {% empty %}
+          <p>No features added yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Tech Stack Section -->
+    <div class="template-tech">
+      <h2 class="template-tech-title">Tech Stack</h2>
+      <div class="template-tech-list">
+        {% for tech in template.tech_list %}
+          <div class="template-tech-item">
+            <i class="template-tech-icon bi bi-file-code"></i>
+            <span class="template-tech-name">{{ tech }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Pricing Section -->
+    <div class="template-price">
+      <h2 class="template-price-title">Pricing</h2>
+      <p class="template-price-amount">{% if template.price == 0 %}Free{% else %}${{ template.price }}{% endif %}</p>
+      <a href="{% url 'codebay_app:cart_add' template.id %}" class="template-price-btn">
+        Buy Now <i class="bi bi-cart"></i>
+      </a>
+    </div>
+
+    <!-- Screenshots Section -->
+    <div class="template-screenshots">
+      <h2 class="template-screenshots-title">Screenshots</h2>
+      <div class="template-screenshots-grid">
+        {% for screenshot in template.screenshots.all %}
+          <div class="template-screenshot-item">
+            <img src="{{ screenshot.image.url }}" alt="{{ screenshot.caption|default:'Screenshot' }}">
+            {% if screenshot.caption %}
+              <p class="template-screenshot-caption">{{ screenshot.caption }}</p>
+            {% endif %}
+          </div>
+        {% empty %}
+          <p class="no-screenshots-message">Screenshots not available.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- User Reviews Section -->
+    <div class="template-reviews">
+      <h2 class="template-reviews-title">User Reviews</h2>
+      <div class="template-reviews-grid">
+        {% for review in template.reviews.all %}
+          <div class="template-review-card">
+            <div class="template-review-rating">
+              {% with stars=review.get_rating_stars %}
+                {% for _ in stars.full %}
+                  <i class="bi bi-star-fill"></i>
+                {% endfor %}
+                {% for _ in stars.half %}
+                  <i class="bi bi-star-half"></i>
+                {% endfor %}
+                {% for _ in stars.empty %}
+                  <i class="bi bi-star"></i>
+                {% endfor %}
+              {% endwith %}
+            </div>
+            <p class="template-review-text">{{ review.comment }}</p>
+            <p class="template-review-author">{{ review.author }}</p>
+          </div>
+        {% empty %}
+          <p>No reviews yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Related Templates Section -->
+    <div class="template-related">
+      <h2 class="template-related-title">Related Templates</h2>
+      <div class="template-related-grid">
+        {% for related in related_templates %}
+          <div class="template-related-card">
+            <img src="{% if related.images.first %}{{ related.images.first.image.url }}{% else %}https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80{% endif %}" alt="{{ related.name }}">
+            <h4>{{ related.name }}</h4>
+          </div>
+        {% empty %}
+          <p>No related templates found.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="template-faq">
+      <h2 class="template-faq-title">Frequently Asked Questions</h2>
+      {% for faq in template.faqs.all %}
+        <div class="template-faq-item">
+          <p class="template-faq-question">{{ faq.question }}</p>
+          <p class="template-faq-answer">{{ faq.answer }}</p>
+        </div>
+      {% empty %}
+        <p>No FAQs available.</p>
+      {% endfor %}
+    </div>
+  </div>
+</main>
+{% endblock %}

@@ -1,0 +1,298 @@
+{% extends "admin_panel/base.html" %}
+{% block title %}Add Tutorial{% endblock %}
+{% block header_title %}Add Tutorial{% endblock %}
+{% block content %}
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #F5F7FA;
+      color: #2C3E50;
+      margin: 0;
+      padding: 0;
+    }
+
+    .form-section {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 1s ease-in 0.3s;
+      margin-bottom: 2rem;
+    }
+
+    .form-section h3 {
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: #2C3E50;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #2C3E50;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      border: 1px solid #E0E4E8;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: #3498DB;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-group .errorlist {
+      color: #E74C3C;
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+      list-style: none;
+      padding: 0;
+    }
+
+    .form-group .editor-placeholder {
+      border: 1px solid #E0E4E8;
+      border-radius: 6px;
+      padding: 0.75rem;
+      min-height: 200px;
+      background-color: #F9F9F9;
+      color: #555555;
+      font-size: 0.95rem;
+    }
+
+    .form-group#video-url-group,
+    .form-group#text-content-group {
+      display: none;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+
+    .form-actions button {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.95rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .form .save-btn {
+      background-color: #3498DB;
+      color: #FFFFFF;
+    }
+
+    .form-actions .cancel-btn {
+      background-color: #E0E4E8;
+      color: #2C3E50;
+    }
+
+    .form-actions .save-btn:hover {
+      background-color: #F39C12;
+    }
+
+    .form-actions .cancel-btn:hover {
+      background-color: #D0D4D8;
+    }
+
+    .error-message {
+      color: #E74C3C;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .form-section {
+        padding: 1rem;
+      }
+
+      .form-section h3 {
+        font-size: 1.3rem;
+      }
+
+      .form-group label {
+        font-size: 0.9rem;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea,
+      .form-group .editor-placeholder {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+      }
+
+      .form-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .form-actions button {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .form-section h3 {
+        font-size: 1.2rem;
+      }
+
+      .form-group label {
+        font-size: 0.85rem;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea,
+      .form-group .editor-placeholder {
+        font-size: 0.85rem;
+      }
+
+      .form-actions button {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+
+  <div class="form-section">
+    <h3>Add New Tutorial</h3>
+    {% if messages %}
+      {% for message in messages %}
+        <p class="error-message {{ message.tags }}">{{ message }}</p>
+      {% endfor %}
+    {% endif %}
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-group">
+        {{ form.title.label_tag }}
+        {{ form.title }}
+        {% if form.title.errors %}
+          {{ form.title.errors }}
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {{ form.description.label_tag }}
+        {{ form.description }}
+        {% if form.description.errors %}
+          {{ form.description.errors }}
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {{ form.thumbnail.label_tag }}
+        {{ form.thumbnail }}
+        {% if form.thumbnail.errors %}
+          {{ form.thumbnail.errors }}
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {{ form.level.label_tag }}
+        {{ form.level }}
+        {% if form.level.errors %}
+          {{ form.level.errors }}
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {{ form.category.label_tag }}
+        {{ form.category }}
+        {% if form.category.errors %}
+          {{ form.category.errors }}
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {{ form.status.label_tag }}
+        {{ form.status }}
+        {% if form.status.errors %}
+          {{ form.status.errors }}
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {{ form.type.label_tag }}
+        {{ form.type }}
+        {% if form.type.errors %}
+          {{ form.type.errors }}
+        {% endif %}
+      </div>
+      <div class="form-group" id="video-url-group">
+        {{ form.video_url.label_tag }}
+        {{ form.video_url }}
+        {% if form.video_url.errors %}
+          {{ form.video_url.errors }}
+        {% endif %}
+      </div>
+      <div class="form-group" id="text-content-group">
+        {{ form.content.label_tag }}
+        {{ form.content }}
+        {% if form.content.errors %}
+          {{ form.content.errors }}
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {{ form.duration.label_tag }}
+        {{ form.duration }}
+        {% if form.duration.errors %}
+          {{ form.duration.errors }}
+        {% endif %}
+      </div>
+      <div class="form-actions">
+        <a href="{% url 'admin_panel:tutorials_list' %}"><button type="button" class="cancel-btn">Cancel</button></a>
+        <button type="submit" class="save-btn">Save Tutorial</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const typeSelect = document.getElementById('id_type');
+    const videoUrlGroup = document.getElementById('video-url-group');
+    const textContentGroup = document.getElementById('text-content-group');
+
+    function toggleFields() {
+      if (typeSelect.value === 'video') {
+        videoUrlGroup.style.display = 'block';
+        textContentGroup.style.display = 'none';
+      } else if (typeSelect.value === 'text') {
+        videoUrlGroup.style.display = 'none';
+        textContentGroup.style.display = 'block';
+      } else {
+        videoUrlGroup.style.display = 'none';
+        textContentGroup.style.display = 'none';
+      }
+    }
+
+    toggleFields();
+    typeSelect.addEventListener('change', toggleFields);
+  </script>
+{% endblock %}
